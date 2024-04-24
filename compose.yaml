@@ -1,0 +1,30 @@
+version: "3.9"
+include:
+  - infra.yaml
+services:
+  api:
+    build: .
+    ports:
+      - "2220:2220"
+    network_mode: host
+  # dragonfly: # the new redis
+  #   image: docker.dragonflydb.io/dragonflydb/dragonfly
+  #   ulimits:
+  #     memlock: -1
+  #   # command:
+  #   #   - "--save_schedule=*:*" # save for every 1 minute
+  #   #   - "--dir=/data"
+  #   #   - "--dbfilename=dump.rdb"
+  #   ports:
+  #     - "6379:6379"
+  #   volumes:
+  #     - "./dragonfly_data:/data"
+  #   restart: unless-stopped
+    # networks:
+    #   explorer_network:
+# volumes:
+#   dragonflydata:
+# networks:
+#   explorer_network:
+# networks:
+#   explorer_network:

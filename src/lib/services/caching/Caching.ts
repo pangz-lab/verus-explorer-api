@@ -1,0 +1,69 @@
+import { RedisCaching } from "../../infra/caching/RedisCaching";
+import { CachingServiceInterface } from "../../models/CachingServiceInterface";
+
+export class Caching {
+    private static instance?: CachingServiceInterface;
+    private static enable?: boolean;
+
+    private static use(): boolean {
+        if(Caching.enable === undefined)  {
+            Caching.enable = (process.env.USE_CACHING?.toString() == 'true') ?? false
+        }
+        return Caching.enable;
+    }
+
+    private static getInstance(): CachingServiceInterface {
+        if(Caching.instance === undefined) {
+            const conf = process.env;
+            Caching.instance = new RedisCaching(
+                conf.DFLY_DB_HOST!.toString(),
+                parseInt(conf.DFLY_DB_PORT!),
+                conf.CHAIN_SOURCE!.toString()
+            );
+            (Caching.instance as RedisCaching).connect()!;
+        }
+        return Caching.instance;
+    }
+
+    static disconnect(): void {
+        if(Caching.instance !== undefined) {
+            (Caching.instance as RedisCaching).disconnect()!;
+        }
+    }
+    // readonly useCaching: boolean = false;
+
+    // constructor(cache: CachingServiceInterface, useCache: boolean) {
+    //     this.cache = cache
+    //     this.useCaching = useCache;
+    // }
+
+    // setBlockInfo(
+    //     blockHash: string,
+    //     blockHeight: string,
+    //     data: any,
+    //     expiry?: number
+    // ): void {
+    //     const baseKey = CacheKeys.BlockInfoByHashPrefix + blockHash;
+    //     this.set(baseKey, data, expiry);
+    //     this.set(
+    //         CacheKeys.BlockInfoByHeightPrefix + blockHeight,
+    //         CacheKeys.PointerPrefix + baseKey,
+    //         expiry
+    //     );
+    // }
+
+    static set(key: string, value: any, expiry?: number): void {
+        if(!Caching.use()) { return;}
+        (Caching.getInstance() as RedisCaching).set(key, JSON.stringify(value), expiry);
+    }
+
+    static async get<T>(key: string): Promise<undefined | T> {
+        try {
+            if(!Caching.use()) { return; }
+            const d = JSON.parse(await (Caching.getInstance() as RedisCaching).get(key) as string);
+            return (d == null)? undefined : d;
+        } catch (_) {
+            return undefined;
+        }
+    }
+}
