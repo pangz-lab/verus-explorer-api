@@ -7,23 +7,23 @@ export class Block {
             var data: any;
             const response: any = await ChainNativeApi.getBlockDetail(blockHeightOrHash);
             if(response.status != 200 || response.data.error) {
-                Payload._showError(
+                Payload.logError(
                     'fetch block info',
                     `Data: ${blockHeightOrHash}`,
                     `getInfo`);
-                return Payload._errorPayload();
+                return Payload.withError();
             }
 
             data = response.data.result;
-            if(data.height == undefined) { return Payload._errorPayload(); }
+            if(data.height == undefined) { return Payload.withError(); }
 
-            return Payload._successPayload(data);
+            return Payload.withSuccess(data);
         } catch(e) {
-            Payload._showError(
+            Payload.logError(
                 'fetch block info',
                 `Data: ${blockHeightOrHash}`,
                 `getInfo`);
-            return Payload._errorPayload();
+            return Payload.withError();
         }
     }
 
@@ -35,23 +35,23 @@ export class Block {
                 [start.toString(), end.toString()]
             );
             if(response.status != 200 || response.data.error) {
-                Payload._showError(
+                Payload.logError(
                     'fetch block hashes',
                     `Range: ${rangeLabel}`,
                     `getHashesByRange`);
-                return Payload._errorPayload();
+                return Payload.withError();
             }
             
             data = response.data.result;
-            if(data == undefined || data.length === 0) { return Payload._errorPayload(); }
+            if(data == undefined || data.length === 0) { return Payload.withError(); }
 
-            return Payload._successPayload(data);
+            return Payload.withSuccess(data);
         } catch(e) {
-            Payload._showError(
+            Payload.logError(
                 'fetch block hashes',
                 `Range: ${rangeLabel}`,
                 `getHashesByRange`);
-            return Payload._errorPayload();
+            return Payload.withError();
         }
     }
 
@@ -65,7 +65,7 @@ export class Block {
                 currentHash = hashList[i];
                 const response: any = await ChainNativeApi.getBlockDetail(currentHash);
                 if(response.status != 200 || response.data.error) {
-                    Payload._showError(
+                    Payload.logError(
                         'fetch block from hash',
                         `Hash: ${currentHash}`,
                         `getGeneratedFromHash`);
@@ -74,7 +74,7 @@ export class Block {
 
                 data = response.data.result;
             } catch(e) {
-                Payload._showError(
+                Payload.logError(
                     'fetch block from hash',
                     `Hash: ${currentHash}`,
                     `getGeneratedFromHash`);
@@ -87,24 +87,21 @@ export class Block {
                 txCount: data?.tx?.length ?? 0
             });
         }
-        return Payload._successPayload(result);
+        return Payload.withSuccess(result);
     }
 
     static async getSummary(blockHeight: number): Promise<undefined | Object> {
         try {
             var data: any;
             const blockInfo: any = await Block.getInfo(blockHeight);
-            if(blockInfo.error) {
-                throw new Error("Error found while getting the block information.");
-            }
+            if(blockInfo.error) { throw new Error("Error found while getting the block information."); }
+            
             data = await Block.saveSummary(blockInfo.data);
-            if(data == undefined) {
-                throw new Error("Error found while saving the block summary.");
-            }
+            if(data == undefined) { throw new Error("Error found while saving the block summary."); }
             
             return data;
         } catch (e) {
-            Payload._showError(
+            Payload.logError(
                 'get the block summary',
                 `Error: ${e}`,
                 `getSummary`);
@@ -135,7 +132,7 @@ export class Block {
             }
             return data;
         } catch (e) {
-            Payload._showError(
+            Payload.logError(
                 'save the block summary',
                 `Error: ${e}`,
                 `saveSummary`); 

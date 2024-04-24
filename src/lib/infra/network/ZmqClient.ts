@@ -56,12 +56,12 @@ export class ZmqClient {
     private getDefaultEventHandler(): SubscriptionEventsHandler {
         const wss = this.wsServer!;
         return {
-            onHashBlockReceived: function (value: EventData): Object {
-                console.log("onHashBlockReceived >> " + value);
-                return {res: 1};
+            onHashBlockReceived: function (_value: EventData): Object {
+                console.log("onHashBlockReceived >>" + _value);
+                return {};
             },
             after: async function(value: EventData, topic?: string) {
-                await ChainEventHandler.onNewBlockAdded(wss, value, topic)
+                wss.send(await ChainEventHandler.onNewBlockAdded(value, topic));
             }
         };
     }

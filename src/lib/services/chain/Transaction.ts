@@ -7,23 +7,23 @@ export class Transaction {
             var data: any;
             const response: any = await ChainNativeApi.getTransactionInfo(blockHeightOrHash);
             if(response.status != 200 || response.data.error) {
-                Payload._showError(
+                Payload.logError(
                     'fetch transaction info',
                     `Data: ${blockHeightOrHash!}`,
                     `getInfo`);
-                return Payload._errorPayload();
+                return Payload.withError();
             }
 
             data = response.data.result;
-            if(data == undefined) { return Payload._errorPayload();}
+            if(data == undefined) { return Payload.withError();}
 
-            return Payload._successPayload(data);
+            return Payload.withSuccess(data);
         } catch(e) {
-            Payload._showError(
+            Payload.logError(
                 'fetch transaction info',
                 `Data: ${blockHeightOrHash!}`,
                 `getInfo`); 
-            return Payload._errorPayload();
+            return Payload.withError();
         }
     }
 
@@ -32,23 +32,23 @@ export class Transaction {
             var data: any;
             const response: any = await ChainNativeApi.decodeBlockRawTransaction(hexString);
             if(response.status != 200 || response.data.error) {
-                Payload._showError(
+                Payload.logError(
                     'fetch decoded block raw transaction',
                     `Key: -`,
                     `decodeRaw`);
-                return Payload._errorPayload();
+                return Payload.withError();
             }
             
             data = response.data.result;
-            if(data == undefined) { return Payload._errorPayload(); }
+            if(data == undefined) { return Payload.withError(); }
 
-            return Payload._successPayload(data);
+            return Payload.withSuccess(data);
         } catch (e) {
-            Payload._showError(
+            Payload.logError(
                 'fetch decoded block raw transaction',
                 `Key: -`,
                 `decodeRaw`);
-            return Payload._errorPayload();
+            return Payload.withError();
         }
     }
 }

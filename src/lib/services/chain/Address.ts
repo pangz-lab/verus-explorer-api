@@ -7,23 +7,23 @@ export class Address {
             var data: any;
             const response: any = await ChainNativeApi.getAddressTxIds([address]);
             if(response.status != 200 || response.data.error) {
-                Payload._showError(
+                Payload.logError(
                     'fetch address txids',
                     `Address: ${address}`,
                     `getTxIds`);
-                return Payload._errorPayload();
+                return Payload.withError();
             }
             
             data = response.data.result;
-            if(data == undefined) { return Payload._errorPayload(); }
+            if(data == undefined) { return Payload.withError(); }
             
-            return Payload._successPayload(data);
+            return Payload.withSuccess(data);
         } catch(e) {
-            Payload._showError(
+            Payload.logError(
                 'fetch address txids',
                 `Address: ${address}`,
                 `getTxIds`);
-            return Payload._errorPayload();
+            return Payload.withError();
         }
     }
 
@@ -32,22 +32,22 @@ export class Address {
             var data: any;
             const response: any = await ChainNativeApi.getAddressBalance([address]);
             if(response.status != 200 || response.data.error) {
-                Payload._showError(
+                Payload.logError(
                     'fetch address balance',
                     `Address: ${address}`,
                     `getBalance`);
-                return Payload._errorPayload();
+                return Payload.withError();
             }
             
             data = response.data.result;
-            if(data == undefined) { return Payload._errorPayload(); }
-            return Payload._successPayload(data);
+            if(data == undefined) { return Payload.withError(); }
+            return Payload.withSuccess(data);
         } catch(e) {
-            Payload._showError(
+            Payload.logError(
                 'fetch address balance',
                 `Address: ${address}`,
                 `getBalance`);
-            return Payload._errorPayload();
+            return Payload.withError();
         }
     }
 }

@@ -57,9 +57,7 @@ export class WsServer
     }
 
     receive(): void {
-        if(this.wss == undefined) {
-            throw new Error('WebSocket Server is not running.');
-        };
+        if(this.wss == undefined) { throw new Error('WebSocket Server is not running.'); };
 
         const wss = this.wss!;
         const connectionCheckerInterval = this.connectionCheckerInterval;
@@ -73,7 +71,6 @@ export class WsServer
         this.connectionCheckerInterval = setInterval(function() {
             wss.clients.forEach(function each(ws) {
                 if (ws.readyState !== WebSocket.OPEN) {
-                    console.log("Connection is closed. CLOSING ....");
                     return ws.terminate();
                 }
             });
@@ -81,7 +78,7 @@ export class WsServer
     }
 
     send(payload: any) {
-        if(this.wss == undefined) { return };
+        if(this.wss == undefined) { throw new Error('WebSocket Server is not running.'); };
 
         var clientsCount = 0;
         var dcClientsCount = 0;

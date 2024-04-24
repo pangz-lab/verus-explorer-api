@@ -5,7 +5,7 @@ export class Caching {
     private static instance?: CachingServiceInterface;
     private static enable?: boolean;
 
-    private static use(): boolean {
+    private static isEnabled(): boolean {
         if(Caching.enable === undefined)  {
             Caching.enable = (process.env.USE_CACHING?.toString() == 'true') ?? false
         }
@@ -14,31 +14,34 @@ export class Caching {
 
     private static getInstance(): CachingServiceInterface {
         if(Caching.instance === undefined) {
-            const conf = process.env;
-            Caching.instance = new RedisCaching(
-                conf.DFLY_DB_HOST!.toString(),
-                parseInt(conf.DFLY_DB_PORT!),
-                conf.CHAIN_SOURCE!.toString()
-            );
-            (Caching.instance as RedisCaching).connect()!;
+            try {
+                const conf = process.env;
+                Caching.instance = new RedisCaching(
+                    conf.DFLY_DB_HOST!.toString(),
+                    parseInt(conf.DFLY_DB_PORT!),
+                    conf.CHAIN_SOURCE!.toString()
+                );
+                (Caching.instance as RedisCaching).connect()!;
+            } catch (e) {
+                throw new Error("Caching service is unavailable! Check connecting and try again.");
+            }
         }
         return Caching.instance;
     }
 
     static disconnect(): void {
-        if(Caching.instance !== undefined) {
-            (Caching.instance as RedisCaching).disconnect()!;
-        }
+        if(Caching.instance == undefined) { return; }
+        (Caching.instance as RedisCaching).disconnect()!;
     }
 
     static set(key: string, value: any, expiry?: number): void {
-        if(!Caching.use()) { return;}
+        if(!Caching.isEnabled()) { return; }
         (Caching.getInstance() as RedisCaching).set(key, JSON.stringify(value), expiry);
     }
 
     static async get<T>(key: string): Promise<undefined | T> {
         try {
-            if(!Caching.use()) { return; }
+            if(!Caching.isEnabled()) { return; }
             const d = JSON.parse(await (Caching.getInstance() as RedisCaching).get(key) as string);
             return (d == null)? undefined : d;
         } catch (_) {

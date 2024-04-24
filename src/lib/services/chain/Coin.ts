@@ -7,23 +7,23 @@ export class Coin {
             var data: any;
             const response: any = await ChainNativeApi.getCoinSupply();
             if(response.status != 200 || response.data.error) {
-                Payload._showError(
+                Payload.logError(
                     'fetch coin supply info',
                     `Data: -`,
                     `getSupplyInfo`);
-                return Payload._errorPayload();
+                return Payload.withError();
             }
             
             data = response.data.result;
-            if(data == undefined) { return Payload._errorPayload(); }
+            if(data == undefined) { return Payload.withError(); }
 
-            return Payload._successPayload(data);
+            return Payload.withSuccess(data);
         } catch(e) {
-            Payload._showError(
+            Payload.logError(
                 'fetch coin supply info',
                 `Data: -`,
                 `getSupplyInfo`);
-            return Payload._errorPayload();
+            return Payload.withError();
         }
     }
 }

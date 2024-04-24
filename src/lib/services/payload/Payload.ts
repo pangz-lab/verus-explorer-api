@@ -1,3 +1,5 @@
+import { Logger } from "../Logger";
+
 export type ServicePayload = undefined | SuccessPayload | ErrorPayload;
 export type SuccessPayload = {
     data: Object, 
@@ -13,26 +15,26 @@ export type LatestChainStatePayload = {
     status?: Object,
     latestBlocks?: Object,
     latestTxs?: Object,
+    nodeState?: Object,
 }
 
-
 export class Payload {
-    static _errorPayload(): ErrorPayload { return {
+    static withError(): ErrorPayload { return {
         data: [],
         error: true
     }}
     
-    static _successPayload(data: any): SuccessPayload { 
+    static withSuccess(data: any): SuccessPayload { 
         return { data: data, error: false };
     }
 
-    static _showError(data: string, value: string, method: string): void {
-        console.error(
+    static logError(data: string, value: string, method: string): void {
+        Logger.toErrorLog(
             `\n${(new Date()).toISOString()} :` +
             `\nFailed to ${data}` +
             `\n${value}` +
             `\nMethod: ${method}` +
-            `\nOther operation will proceed.`
+            `\nOther operation will still continue.`
         );
     }
 }
