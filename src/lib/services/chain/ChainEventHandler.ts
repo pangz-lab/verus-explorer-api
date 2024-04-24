@@ -1,9 +1,9 @@
 import { EventData } from "verus-zmq-client";
 import { WsServer } from "../../infra/network/WsServer";
 import { LatestChainStatePayload } from "../payload/Payload";
+import { Block as BlockService } from "./Block";
 import { Transaction as TransactionService } from "./Transaction";
 import { Blockchain as BlockchainService } from "./Blockchain";
-import { Block as BlockService } from "./Block";
 
 export class ChainEventHandler {
     private static lastProcessedHeight = 0;

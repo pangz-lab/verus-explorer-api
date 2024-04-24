@@ -30,27 +30,6 @@ export class Caching {
             (Caching.instance as RedisCaching).disconnect()!;
         }
     }
-    // readonly useCaching: boolean = false;
-
-    // constructor(cache: CachingServiceInterface, useCache: boolean) {
-    //     this.cache = cache
-    //     this.useCaching = useCache;
-    // }
-
-    // setBlockInfo(
-    //     blockHash: string,
-    //     blockHeight: string,
-    //     data: any,
-    //     expiry?: number
-    // ): void {
-    //     const baseKey = CacheKeys.BlockInfoByHashPrefix + blockHash;
-    //     this.set(baseKey, data, expiry);
-    //     this.set(
-    //         CacheKeys.BlockInfoByHeightPrefix + blockHeight,
-    //         CacheKeys.PointerPrefix + baseKey,
-    //         expiry
-    //     );
-    // }
 
     static set(key: string, value: any, expiry?: number): void {
         if(!Caching.use()) { return;}

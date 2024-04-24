@@ -34,8 +34,6 @@ export class ChainNativeApi {
     }
 
     static async getIdentity(identityName: string, height?: number): Promise<Object> {
-        // return this.verusd.getIdentity(params[0], parseInt(params[1] ?? "0"));
-        // return await this.verusd.getIdentity(identityName, height);
         return await ChainExternalApi.send("getidentity", [identityName, height].filter(e => typeof e == 'string'));
     }
 
@@ -45,9 +43,6 @@ export class ChainNativeApi {
 
     static async getAddressBalance(addresses: string[]): Promise<Object> {
         return await ChainExternalApi.send('getaddressbalance', [{"addresses": addresses}]);
-        // return this.verusd.getAddressBalance({
-        //     addresses: ((params as string[])[0] as Object)!.addresses
-        // });
     }
 
     static async getBlockHashes(dateTime: string[]): Promise<Object> {
