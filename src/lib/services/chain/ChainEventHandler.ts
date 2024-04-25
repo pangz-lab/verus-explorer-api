@@ -11,7 +11,6 @@ export class ChainEventHandler {
     
     static async onNewBlockAdded(value: EventData, topic?: string)
         : Promise<LatestChainStatePayload | Object> {
-        var blockInfoSummary: any = { "blocks": [] };
 
         const lastProcessedHeight = ChainEventHandler.lastProcessedHeight;
         const blockInfo: any = await BlockService.getInfo(value as string);
@@ -27,36 +26,12 @@ export class ChainEventHandler {
         const summary: any = await BlockService.saveSummary(blockInfo.data);
         if(summary === undefined) { return {[topic as string]: value}; }
         
+        var blockInfoSummary: any = { "blocks": summary };
         var blockTxs: string[] = [];
-        blockInfoSummary["blocks"].push(summary);
         summary.txs.map((e: string) => { if(!blockTxs.includes(e)) { blockTxs.unshift(e); } });
 
         ChainEventHandler.lastProcessedHeight = chainHeight;
         const txsInfo = await ChainEventHandler.getBlockTxesInfo(blockTxs);
-        
-        // const result: ServicePayload = await BlockchainService.getStatus();
-        // if(result == undefined || result!.error) { return {[topic as string]: value}; }
-
-        // const statsData: any = result.data;
-        // const r1 = statsData.at(0)!.data;
-        // const r2 = statsData.at(1)!.data;
-        // const r3 = statsData.at(2)!.data;
-        // const blockchainStatus = {
-        //     // R1
-        //     'VRSCversion': 'v' + r1.VRSCversion,
-        //     'protocolVersion': r1.protocolversion,
-        //     'blocks': r1.blocks,
-        //     'longestchain': r1.longestchain,
-        //     'connections': r1.connections,
-        //     'difficulty': r1.difficulty,
-        //     'version': r1.version,
-        //     //R2
-        //     'networkHashrate': r2.networkhashps,
-        //     // R3
-        //     'circulatingSupply': r3.supply,
-        //     'circulatingSupplyTotal': r3.total,
-        //     'circulatingZSupply': r3.zfunds,
-        // };
 
         const blockchainStatus = await ChainEventHandler.getBlockchainStatus();
         if(blockchainStatus == undefined) { return {[topic as string]: value}; }

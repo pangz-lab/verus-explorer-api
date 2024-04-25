@@ -1,6 +1,15 @@
 import { RedisCaching } from "../../infra/caching/RedisCaching";
 import { CachingServiceInterface } from "../../models/CachingServiceInterface";
 
+type GetParams<T> = {
+    source: Function,
+    onErrorCheck: OnErrorCheck<T>,
+    key: string,
+    ttl: number,
+    useCache?: boolean
+}
+type OnErrorCheck<T> = (param: T) => boolean;
+
 export class Caching {
     private static instance?: CachingServiceInterface;
     private static enable?: boolean;
@@ -48,4 +57,21 @@ export class Caching {
             return undefined;
         }
     }
+}
+
+export class PayloadCache {
+    static async get<T>(p: GetParams<T>): Promise<T | undefined> {
+        if(p.useCache != undefined && !p.useCache) {
+            return await p.source();
+        }
+
+        var resBody = await Caching.get<T>(p.key);
+        if(resBody == undefined) {
+            resBody = await p.source();
+            if(p.onErrorCheck(resBody as T)) { return undefined; }
+            Caching.set(p.key, resBody, p.ttl);
+        }
+        return resBody;
+    }
+
 }
