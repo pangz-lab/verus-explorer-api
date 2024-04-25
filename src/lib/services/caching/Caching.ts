@@ -32,7 +32,7 @@ export class Caching {
                 );
                 (Caching.instance as RedisCaching).connect()!;
             } catch (e) {
-                throw new Error("Caching service is unavailable! Check connecting and try again.");
+                throw new Error("Caching service is unavailable! Check the connection and try again.");
             }
         }
         return Caching.instance;
@@ -73,5 +73,10 @@ export class PayloadCache {
         }
         return resBody;
     }
-
+    
+    static async save<T>(p: GetParams<T>): Promise<T | undefined> {
+        const result = await p.source();
+        if(p.onErrorCheck(result as T)) { return undefined; }
+        Caching.set(p.key, result, p.ttl);
+    }
 }

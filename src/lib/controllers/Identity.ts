@@ -14,21 +14,7 @@ export class Identity {
         const keyExt = (height != undefined ? '_' + height?.toString() : '');
         const cacheKey = CacheKeys.IdentityInfoPrefix.key + identityValue + keyExt;
         const ttl = CacheKeys.IdentityInfoPrefix.ttl;
-        // var resBody: ServicePayload;
-
-        // resBody = await Caching.get<ServicePayload>(cacheKey);
-        // if(resBody == undefined) {
-        //     resBody = await IdentityService.getInfo(identityValue, height);
-        //     if(resBody != undefined && resBody.error) {
-        //         return res
-        //             .status(500)
-        //             .send("Internal server error!");
-        //     }
-        //     Caching.set(cacheKey, resBody, ttl);
-        // }
-
-        // res.send(resBody);
-
+        
         const resBody: ServicePayload = await PayloadCache.get<ServicePayload>({
             source: async () => await IdentityService.getInfo(identityValue, height),
             onErrorCheck: (r) => r == undefined || (r != undefined && r.error),

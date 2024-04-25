@@ -8,6 +8,9 @@ import {
 } from "verus-zmq-client";
 import { WsServer } from "./WsServer";
 import { ChainEventHandler } from "../../services/chain/ChainEventHandler";
+import { PayloadCache } from "../../services/caching/Caching";
+import { Payload, ServicePayload } from "../../services/payload/Payload";
+import { CacheKeys } from "../../services/caching/CacheKeys";
 
 
 export class ZmqClient {
@@ -59,7 +62,23 @@ export class ZmqClient {
             onHashBlockReceived: async function (value: EventData): Promise<Object> {
                 console.log("onHashBlockReceived >>" + value);
                 setTimeout(async function() {
-                    wss.send(await ChainEventHandler.onNewBlockAdded(value, 'hashblock'));
+                    const cacheKey = CacheKeys.BlockchainStatus.key;
+                    const ttl = CacheKeys.BlockchainStatus.ttl;
+
+                    const data = await ChainEventHandler.onNewBlockAdded(value);
+                    await PayloadCache.save<ServicePayload>({
+                        source: async () => {
+                            return (data == undefined)?
+                                Payload.withError():
+                                Payload.withSuccess(data);
+                        },
+                        onErrorCheck: (r) => r == undefined || (r != undefined && r.error),
+                        key: cacheKey,
+                        ttl: ttl
+                    });
+
+                    wss.send(data);
+
                 }, 500);
                 return {};
             }

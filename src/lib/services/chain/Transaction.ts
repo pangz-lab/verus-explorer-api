@@ -2,14 +2,14 @@ import { ServicePayload, Payload } from "../payload/Payload";
 import { ChainNativeApi } from "./ChainNativeApi";
 
 export class Transaction {
-    static async getInfo(blockHeightOrHash: string): Promise<ServicePayload> {
+    static async getInfo(txHash: string): Promise<ServicePayload> {
         try {
             var data: any;
-            const response: any = await ChainNativeApi.getTransactionInfo(blockHeightOrHash);
+            const response: any = await ChainNativeApi.getTransactionInfo(txHash);
             if(response.status != 200 || response.data.error) {
                 Payload.logError(
                     'fetch transaction info',
-                    `Data: ${blockHeightOrHash!}`,
+                    `Data: ${txHash!}`,
                     `getInfo`);
                 return Payload.withError();
             }
@@ -21,7 +21,7 @@ export class Transaction {
         } catch(e) {
             Payload.logError(
                 'fetch transaction info',
-                `Data: ${blockHeightOrHash!}`,
+                `Data: ${txHash!}`,
                 `getInfo`); 
             return Payload.withError();
         }

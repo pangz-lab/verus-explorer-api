@@ -1,4 +1,4 @@
-export interface DuplexServer {
+export interface DuplexServerInterface {
     receive(): void;
     send<T>(data: T): void;
 }

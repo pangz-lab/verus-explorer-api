@@ -1,23 +1,27 @@
-type NodeState = {
+export type ChainNodeState = {
     sync: boolean,
     blocks: number,
     longestChain: number,
-    syncPercentage?: number
+    blockHash: string,
+    longestChainBlockHash: string,
+    syncPercentage?: number,
 }
 
 export class ChainNode {
-    private static state: NodeState = {
+    private static state: ChainNodeState = {
         sync: false,
         blocks: -1,
         longestChain: 1,
+        blockHash: "-1",
+        longestChainBlockHash: "1",
         syncPercentage: undefined
     };
 
-    static getState(): undefined | NodeState {
+    static getState(): undefined | ChainNodeState {
         return ChainNode.state;
     }
 
-    static setState(state: NodeState): void {
+    static setState(state: ChainNodeState): void {
         if(state.syncPercentage == undefined) {
             const syncPercentage = state.blocks == state.longestChain?
             100 : 
@@ -28,15 +32,12 @@ export class ChainNode {
                 sync: state.sync,
                 blocks: state.blocks,
                 longestChain: state.longestChain,
+                blockHash: state.blockHash,
+                longestChainBlockHash: state.longestChainBlockHash,
                 syncPercentage: syncPercentage
             }
         }
 
-        ChainNode.state = {
-            sync: state.sync,
-            blocks: state.blocks,
-            longestChain: state.longestChain,
-            syncPercentage: state.syncPercentage,
-        };
+        ChainNode.state = state;
     }
 }

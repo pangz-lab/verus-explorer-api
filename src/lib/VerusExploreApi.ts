@@ -1,10 +1,12 @@
 import { ServerInterface } from "./models/ServerInterface";
 import { HttpServer } from "./infra/network/HttpServer";
 import { ZmqClient } from "./infra/network/ZmqClient";
+import { Routes } from "./routes/Routes";
+import { Caching } from "./services/caching/Caching";
 
 export class VerusExplorerApi implements ServerInterface {
-    private zmqClient?: ZmqClient;
-    private httpServer?: HttpServer;
+    private zmqClient: ZmqClient;
+    private httpServer: HttpServer;
 
     constructor(zmqClient: ZmqClient, httpServer: HttpServer) {
         this.zmqClient = zmqClient;
@@ -12,14 +14,16 @@ export class VerusExplorerApi implements ServerInterface {
     }
 
     open(): ServerInterface {
-        this.httpServer!.open();
-        this.zmqClient!.connect();
+        this.httpServer.open();
+        this.zmqClient.connect();
+        Routes.generate(this.httpServer!.routeApp!);
         return this;
     }
 
     close(): boolean {
-        this.httpServer!.close();
-        this.zmqClient!.disconnect();
+        this.zmqClient.disconnect();
+        this.httpServer.close();
+        Caching.disconnect();
         return true;
     }
 }

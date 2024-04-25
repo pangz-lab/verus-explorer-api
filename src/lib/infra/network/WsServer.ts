@@ -1,12 +1,12 @@
 import WebSocket, { WebSocketServer } from 'ws';
-import { DuplexServer, ServerInterface } from '../../models/ServerInterface';
+import { DuplexServerInterface, ServerInterface } from '../../models/ServerInterface';
 
 type EventsConfig = {
     intervalCheckInSec?: number,
 };
 
 export class WsServer 
-    implements DuplexServer, ServerInterface  {
+    implements DuplexServerInterface, ServerInterface  {
     private wss?: WebSocketServer;
     private config?: WebSocket.ServerOptions;
     private connectionCheckerInterval?: NodeJS.Timeout;
@@ -63,16 +63,12 @@ export class WsServer
         const connectionCheckerInterval = this.connectionCheckerInterval;
 
         wss.on('close', function() {
-            if(connectionCheckerInterval != null) {
-                clearInterval(connectionCheckerInterval);
-            }
+            if(connectionCheckerInterval != null) { clearInterval(connectionCheckerInterval); }
         });
 
         this.connectionCheckerInterval = setInterval(function() {
             wss.clients.forEach(function each(ws) {
-                if (ws.readyState !== WebSocket.OPEN) {
-                    return ws.terminate();
-                }
+                if (ws.readyState !== WebSocket.OPEN) { return ws.terminate(); }
             });
         }, this.defaultEventsConfig.intervalCheckInSec);
     }

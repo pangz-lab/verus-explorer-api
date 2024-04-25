@@ -21,8 +21,8 @@ export class ChainNativeApi {
         return await ChainExternalApi.send('decoderawtransaction', [hexString]);
     }
     
-    static async getTransactionInfo(heightOrTx: string): Promise<Object> {
-        return await ChainExternalApi.send('getrawtransaction', [heightOrTx, 1]);
+    static async getTransactionInfo(txHash: string): Promise<Object> {
+        return await ChainExternalApi.send('getrawtransaction', [txHash, 1]);
     }
 
     static async getBlockDetail(heightOrHash: string | number): Promise<Object> {

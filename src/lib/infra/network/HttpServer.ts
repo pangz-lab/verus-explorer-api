@@ -41,11 +41,11 @@ export class HttpServer implements ServerInterface {
         });
         
         const httpServer = this.expressApp.listen(this.port!);
-        this.wsClientConnection(httpServer);
+        this.attachWsServerConnection(httpServer);
         return this;
     }
 
-    private wsClientConnection(httpServer: http.Server): void {
+    private attachWsServerConnection(httpServer: http.Server): void {
         if(this.wsServer!.socket == undefined) {
             throw new Error("Websocket Server is not running.");
         }

@@ -11,9 +11,9 @@ export type ErrorPayload = {
     error: true
 }
 
-export type LatestChainStatePayload = {
+export type LatestChainStatePayload = undefined | {
     status?: Object,
-    latestBlocks?: Object,
+    latestBlock?: Object,
     latestTxs?: Object,
     nodeState?: Object,
 }
@@ -24,7 +24,7 @@ export class Payload {
         error: true
     }}
     
-    static withSuccess(data: any): SuccessPayload { 
+    static withSuccess<T>(data: T | any): SuccessPayload { 
         return { data: data, error: false };
     }
 

@@ -9,14 +9,14 @@ export class Routes {
     static generate(app: Express): void {
         app.post('/api/blocks/generated', BlockController.generated);
         app.post('/api/block/hashes', BlockController.hashes);
-        app.post('/api/block/info', BlockController.info);
+        app.get('/api/block/:heightOrHash/info', BlockController.info);
         app.get('/api/blockchain/mining/info', BlockchainController.miningInfo);
         app.get('/api/blockchain/info', BlockchainController.info);
         app.get('/api/blockchain/height', BlockchainController.height);
         app.get('/api/blockchain/status', BlockchainController.status);
-        app.post('/api/transaction/info', TransactionController.info);
+        app.get('/api/transaction/:txHash/info', TransactionController.info);
         app.post('/api/identity/info', IdentityController.info);
-        app.post('/api/address/txids', AddressController.txIds);
-        app.post('/api/address/balance', AddressController.balance);
+        app.get('/api/address/:address/txids', AddressController.txIds);
+        app.get('/api/address/:address/balance', AddressController.balance);
     }
 }

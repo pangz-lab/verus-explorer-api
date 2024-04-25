@@ -1,5 +1,14 @@
 import { ServicePayload, Payload } from "../payload/Payload";
 import { ChainNativeApi } from "./ChainNativeApi";
+import { Transaction } from "./Transaction";
+
+export type BlockTxSummary = {
+    txid: string,
+    vout: string,
+    time: number,
+    height: number,
+    blockhash: string,
+}
 
 export class Block {
     static async getInfo(blockHeightOrHash: string | number): Promise<ServicePayload> {
@@ -96,7 +105,7 @@ export class Block {
             const blockInfo: any = await Block.getInfo(blockHeight);
             if(blockInfo.error) { throw new Error("Error found while getting the block information."); }
             
-            data = await Block.saveSummary(blockInfo.data);
+            data = await Block.getBasicInfo(blockInfo.data);
             if(data == undefined) { throw new Error("Error found while saving the block summary."); }
             
             return data;
@@ -109,7 +118,7 @@ export class Block {
         }
     }
 
-    static async saveSummary(blockInfo: any): Promise<undefined | Object> {
+    static async getBasicInfo(blockInfo: any): Promise<undefined | Object> {
         try {
             const blockHeight = blockInfo!.height;
             var data: any;
@@ -133,11 +142,36 @@ export class Block {
             return data;
         } catch (e) {
             Payload.logError(
-                'save the block summary',
+                'get the block basic info',
                 `Error: ${e}`,
-                `saveSummary`); 
+                `getBasicInfo`); 
             return undefined;
         }
     }
 
+    static async getTxsInfo(blockTxs: string[]): Promise<BlockTxSummary[]> {
+        var txsInfo = [];
+        var retryCounter = 0;
+        for(var index = 0; index < blockTxs.length; index++) {
+            var txInfo: any = await Transaction.getInfo((blockTxs.at(index) as string));
+            retryCounter = 0;
+
+            while(txInfo.error && retryCounter < 3) {
+                txInfo = await Transaction.getInfo((blockTxs.at(index) as string));
+                retryCounter += 1;
+            }
+            
+            if(txInfo.error) { continue; }
+            const d = txInfo.data;
+            txsInfo.push({
+                txid: d.txid,
+                vout: d.vout,
+                time: d.time,
+                height: d.height,
+                blockhash: d.blockhash,
+            });
+        }
+
+        return txsInfo;
+    }
 }

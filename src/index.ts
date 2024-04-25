@@ -3,8 +3,6 @@ import { VerusExplorerApi } from "./lib/VerusExploreApi";
 import { HttpServer } from './lib/infra/network/HttpServer';
 import { ZmqClient } from './lib/infra/network/ZmqClient';
 import { WsServer } from './lib/infra/network/WsServer';
-import { Caching } from './lib/services/caching/Caching';
-import { Routes } from './lib/routes/Routes';
 
 try {
     const conf = process.env;
@@ -18,13 +16,10 @@ try {
     );
 
     const explorerApi = new VerusExplorerApi(zmqClient, httpServer);
-
     explorerApi.open();
-    Routes.generate(httpServer.routeApp!);
 
     process.on('exit', () => {
         explorerApi.close();
-        Caching.disconnect();
     });
 
 } catch(e) {

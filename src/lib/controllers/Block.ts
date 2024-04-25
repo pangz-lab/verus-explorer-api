@@ -15,19 +15,6 @@ import { Block as BlockService } from "../services/chain/Block";
             .digest('hex');
         const cacheKey = CacheKeys.BlockInfoByHashPrefix.key + hashlistChecksum;
         const ttl = CacheKeys.BlockInfoByHashPrefix.ttl;
-        // var resBody: ServicePayload;
-
-        // resBody = await Caching.get<ServicePayload>(cacheKey);
-        // if(resBody == undefined) {
-        //     resBody = await BlockService.getGeneratedFromHash(hashList);
-        //     if(resBody != undefined && resBody.error) {
-        //         return res
-        //             .status(500)
-        //             .send("Internal server error!");
-        //     }
-        //     Caching.set(cacheKey, resBody, ttl);
-        // }
-        // res.send(resBody);
 
         const resBody: ServicePayload = await PayloadCache.get<ServicePayload>({
             source: async () => await BlockService.getGeneratedFromHash(hashList),
@@ -49,7 +36,6 @@ import { Block as BlockService } from "../services/chain/Block";
 
         const cacheKey = CacheKeys.BlockHashesListPrefix.key + rangeLabel;
         const ttl = CacheKeys.BlockHashesListPrefix.ttl;
-        // var resBody: ServicePayload;
 
         const isDateRangeWithinToday = Block.isDateWithinRange(start, end, Math.floor(Date.now() / 1000));
         const isOneDayRange = ((start - end)/60/60) == 24;
@@ -65,41 +51,12 @@ import { Block as BlockService } from "../services/chain/Block";
 
         if(resBody === undefined) { return res.status(500).send("Internal server error!"); }
         res.send(resBody);
-        
-        // if(useCache) { resBody = await Caching.get<ServicePayload>(cacheKey); }
-        // if(resBody == undefined) {
-        //     resBody = await BlockService.getHashesByRange(start, end);
-        //     if(resBody != undefined && resBody.error) {
-        //         return res
-        //             .status(500)
-        //             .send("Internal server error!");
-        //     }
-        //     if(useCache) { Caching.set(cacheKey, resBody, ttl); }
-        // }
-        
-        // res.send(resBody);
     }
 
     static async info(req: Request, res: Response) {
-        const body = req.body as RpcRequestBody;
-        const blockHeightOrHash = body.params![0]! as string;
-        
+        const blockHeightOrHash = req.params.heightOrHash as string;
         const cacheKey = CacheKeys.BlockInfoByHashPrefix.key + blockHeightOrHash;
         const ttl = CacheKeys.BlockInfoByHashPrefix.ttl;
-        // var resBody: ServicePayload;
-        
-        // resBody = await Caching.get<ServicePayload>(cacheKey);
-        // if(resBody == undefined) {
-        //     resBody = await BlockService.getInfo(blockHeightOrHash);
-        //     if(resBody != undefined && resBody.error) {
-        //         return res
-        //             .status(500)
-        //             .send("Internal server error!");
-        //     }
-        //     Caching.set(cacheKey, resBody, ttl);
-        // }
-        
-        // res.send(resBody);
 
         const resBody: ServicePayload = await PayloadCache.get<ServicePayload>({
             source: async () => await BlockService.getInfo(blockHeightOrHash),
