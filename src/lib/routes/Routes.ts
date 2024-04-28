@@ -4,6 +4,7 @@ import { Address as AddressController } from "../controllers/Address";
 import { Identity as IdentityController } from "../controllers/Identity";
 import { Blockchain as BlockchainController } from "../controllers/Blockchain";
 import { Transaction as TransactionController } from "../controllers/Transaction";
+import { Search  as SearchController } from '../controllers/Search';
 
 export class Routes {
     static generate(app: Express): void {
@@ -18,5 +19,6 @@ export class Routes {
         app.post('/api/identity/info', IdentityController.info);
         app.get('/api/address/:address/txids', AddressController.txIds);
         app.get('/api/address/:address/balance', AddressController.balance);
+        app.get('/api/search/', SearchController.query);
     }
 }

@@ -15,6 +15,7 @@ export class CacheKeys {
     static CoinSupplyInfo: CacheData = { key: "supply_info:", ttl: 3600 };
     static TxInfoPrefix: CacheData = { key: "tx_info:", ttl: 86400 }; //OK
     static IdentityInfoPrefix: CacheData = { key: "identity_info:", ttl: 600 }; //OK
-    static AddressTxListPrefix: CacheData = { key: "address_tx_list:", ttl: 180 }; //OK
-    static AddressBalancePrefix: CacheData = { key: "address_balance:", ttl: 300 }; //OK
+    static AddressTxListPrefix: CacheData = { key: "address_tx_list:", ttl: 60 * 5 }; //OK
+    static AddressBalancePrefix: CacheData = { key: "address_balance:", ttl: 60 * 5 }; //OK
+    static SearchQueryPrefix: CacheData = { key: "search:", ttl: 60 * 60 }; //OK
 }

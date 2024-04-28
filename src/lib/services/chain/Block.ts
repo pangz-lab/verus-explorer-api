@@ -1,14 +1,6 @@
 import { ServicePayload, Payload } from "../payload/Payload";
 import { ChainNativeApi } from "./ChainNativeApi";
-import { Transaction } from "./Transaction";
 
-export type BlockTxSummary = {
-    txid: string,
-    vout: string,
-    time: number,
-    height: number,
-    blockhash: string,
-}
 
 export class Block {
     static async getInfo(blockHeightOrHash: string | number): Promise<ServicePayload> {
@@ -147,31 +139,5 @@ export class Block {
                 `getBasicInfo`); 
             return undefined;
         }
-    }
-
-    static async getTxsInfo(blockTxs: string[]): Promise<BlockTxSummary[]> {
-        var txsInfo = [];
-        var retryCounter = 0;
-        for(var index = 0; index < blockTxs.length; index++) {
-            var txInfo: any = await Transaction.getInfo((blockTxs.at(index) as string));
-            retryCounter = 0;
-
-            while(txInfo.error && retryCounter < 3) {
-                txInfo = await Transaction.getInfo((blockTxs.at(index) as string));
-                retryCounter += 1;
-            }
-            
-            if(txInfo.error) { continue; }
-            const d = txInfo.data;
-            txsInfo.push({
-                txid: d.txid,
-                vout: d.vout,
-                time: d.time,
-                height: d.height,
-                blockhash: d.blockhash,
-            });
-        }
-
-        return txsInfo;
     }
 }

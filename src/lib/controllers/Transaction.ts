@@ -13,7 +13,7 @@ export class Transaction {
 
         const resBody: ServicePayload = await PayloadCache.get<ServicePayload>({
             source: async () => await TransactionService.getInfo(txHash),
-            onErrorCheck: (r) => r == undefined || (r != undefined && r.error),
+            onReturnUndefinedIf: (r) => r == undefined || (r != undefined && r.error),
             key: cacheKey,
             ttl: ttl
         });

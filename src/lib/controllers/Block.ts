@@ -1,24 +1,22 @@
-import crypto from 'crypto';
 import { Request, Response } from 'express';
 import { RpcRequestBody } from "verusd-rpc-ts-client/lib/types/RpcRequest";
 import { CacheKeys } from '../services/caching/CacheKeys';
 import { PayloadCache } from '../services/caching/Caching';
 import { ServicePayload } from '../services/payload/Payload';
 import { Block as BlockService } from "../services/chain/Block";
+import { Hashing } from '../services/Hashing';
 
  export class Block {
     static async generated(req: Request, res: Response) {
         const body = req.body as RpcRequestBody;
         const hashList = body.params! as string[];
-        const hashlistChecksum = (crypto.createHash('sha1')
-            .update(hashList.toString()))
-            .digest('hex');
+        const hashlistChecksum = Hashing.createChecksum(hashList.toString());
         const cacheKey = CacheKeys.BlockInfoByHashPrefix.key + hashlistChecksum;
         const ttl = CacheKeys.BlockInfoByHashPrefix.ttl;
 
         const resBody: ServicePayload = await PayloadCache.get<ServicePayload>({
             source: async () => await BlockService.getGeneratedFromHash(hashList),
-            onErrorCheck: (r) => r == undefined || (r != undefined && r.error),
+            onReturnUndefinedIf: (r) => r == undefined || (r != undefined && r.error),
             key: cacheKey,
             ttl: ttl
         });
@@ -43,7 +41,7 @@ import { Block as BlockService } from "../services/chain/Block";
 
         const resBody: ServicePayload = await PayloadCache.get<ServicePayload>({
             source: async () =>  await BlockService.getHashesByRange(start, end),
-            onErrorCheck: (r) => r == undefined || (r != undefined && r.error),
+            onReturnUndefinedIf: (r) => r == undefined || (r != undefined && r.error),
             key: cacheKey,
             ttl: ttl,
             useCache: useCache
@@ -60,7 +58,7 @@ import { Block as BlockService } from "../services/chain/Block";
 
         const resBody: ServicePayload = await PayloadCache.get<ServicePayload>({
             source: async () => await BlockService.getInfo(blockHeightOrHash),
-            onErrorCheck: (r) => r == undefined || (r != undefined && r.error),
+            onReturnUndefinedIf: (r) => r == undefined || (r != undefined && r.error),
             key: cacheKey,
             ttl: ttl
         });

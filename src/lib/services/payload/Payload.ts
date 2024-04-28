@@ -19,8 +19,8 @@ export type LatestChainStatePayload = undefined | {
 }
 
 export class Payload {
-    static withError(): ErrorPayload { return {
-        data: [],
+    static withError(value?: any): ErrorPayload { return {
+        data: value ?? [],
         error: true
     }}
     

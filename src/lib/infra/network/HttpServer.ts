@@ -1,8 +1,9 @@
 import cors from 'cors';
 import http from 'http';
-import express, { Express, Request, Response } from 'express';
+import express, { Express } from 'express';
 import { ServerInterface } from '../../models/ServerInterface';
 import { WsServer } from './WsServer';
+import helmet from 'helmet';
 
 export class HttpServer implements ServerInterface {
     private expressApp?: Express;
@@ -25,6 +26,7 @@ export class HttpServer implements ServerInterface {
         this.wsServer!.receive();
         
         this.expressApp = express();
+        this.expressApp.use(helmet());
         this.expressApp!.use(express.json()) // for parsing application/json
         this.expressApp!.use(express.urlencoded({ extended: true }));
         this.expressApp!.use(cors({
@@ -32,13 +34,13 @@ export class HttpServer implements ServerInterface {
             // origin: ['https://wip-insight.pangz.tech', 'http://localhost:2220', 'http://localhost:2221', 'http://localhost:2223'], // Add your allowed origins here
             // origin: '*',
         }));
-        this.expressApp!.options('*', (req: Request, res: Response) => {
-            // res.setHeader('Access-Control-Allow-Origin', '*');
-            // res.setHeader('Access-Control-Allow-Origin', ['http://localhost:2220']);
-            res.setHeader('Access-Control-Allow-Origin', ['http://localhost:2221']);
-            // res.setHeader('Access-Control-Allow-Origin', );
-            // next();
-        });
+        // this.expressApp!.options('*', (req: Request, res: Response) => {
+        //     // res.setHeader('Access-Control-Allow-Origin', '*');
+        //     // res.setHeader('Access-Control-Allow-Origin', ['http://localhost:2220']);
+        //     res.setHeader('Access-Control-Allow-Origin', ['http://localhost:2221']);
+        //     // res.setHeader('Access-Control-Allow-Origin', );
+        //     // next();
+        // });
         
         const httpServer = this.expressApp.listen(this.port!);
         this.attachWsServerConnection(httpServer);
@@ -55,7 +57,7 @@ export class HttpServer implements ServerInterface {
             const pathname = request.url;
             if (pathname === '/verus/wss') {
                 wss.handleUpgrade(request, socket, head, function done(ws) {
-                    ws.send('connection established');
+                    ws.send("{data: 'connection established'}");
                 });
             } else {
                 socket.destroy();

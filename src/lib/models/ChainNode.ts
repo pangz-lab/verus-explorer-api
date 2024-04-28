@@ -5,6 +5,7 @@ export type ChainNodeState = {
     blockHash: string,
     longestChainBlockHash: string,
     syncPercentage?: number,
+    message?: string,
 }
 
 export class ChainNode {
@@ -13,6 +14,7 @@ export class ChainNode {
         blocks: -1,
         longestChain: 1,
         blockHash: "-1",
+        message: "",
         longestChainBlockHash: "1",
         syncPercentage: undefined
     };
@@ -28,13 +30,15 @@ export class ChainNode {
             (state.blocks < state.longestChain) ?
                 (100 / state.longestChain) * state.blocks :
                 0
+            const message = syncPercentage == 100? "💯 Complete": "🚧 Syncing";
             state = {
                 sync: state.sync,
                 blocks: state.blocks,
                 longestChain: state.longestChain,
                 blockHash: state.blockHash,
                 longestChainBlockHash: state.longestChainBlockHash,
-                syncPercentage: syncPercentage
+                syncPercentage: syncPercentage,
+                message: message,
             }
         }
 

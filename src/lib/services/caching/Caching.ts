@@ -3,7 +3,7 @@ import { CachingServiceInterface } from "../../models/CachingServiceInterface";
 
 type GetParams<T> = {
     source: Function,
-    onErrorCheck: OnErrorCheck<T>,
+    onReturnUndefinedIf: OnErrorCheck<T>,
     key: string,
     ttl: number,
     useCache?: boolean
@@ -68,7 +68,7 @@ export class PayloadCache {
         var resBody = await Caching.get<T>(p.key);
         if(resBody == undefined) {
             resBody = await p.source();
-            if(p.onErrorCheck(resBody as T)) { return undefined; }
+            if(p.onReturnUndefinedIf(resBody as T)) { return undefined; }
             Caching.set(p.key, resBody, p.ttl);
         }
         return resBody;
@@ -76,7 +76,7 @@ export class PayloadCache {
     
     static async save<T>(p: GetParams<T>): Promise<T | undefined> {
         const result = await p.source();
-        if(p.onErrorCheck(result as T)) { return undefined; }
+        if(p.onReturnUndefinedIf(result as T)) { return undefined; }
         Caching.set(p.key, result, p.ttl);
     }
 }

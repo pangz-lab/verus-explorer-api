@@ -1,6 +1,14 @@
 import { ServicePayload, Payload } from "../payload/Payload";
 import { ChainNativeApi } from "./ChainNativeApi";
 
+export type BlockTxInfoSummary = {
+    txid: string,
+    vout: string,
+    time: number,
+    height: number,
+    blockhash: string,
+}
+
 export class Transaction {
     static async getInfo(txHash: string): Promise<ServicePayload> {
         try {
@@ -50,5 +58,31 @@ export class Transaction {
                 `decodeRaw`);
             return Payload.withError();
         }
+    }
+
+    static async getBlockTxsInfoSummary(blockTxs: string[]): Promise<BlockTxInfoSummary[]> {
+        var txsInfo = [];
+        var retryCounter = 0;
+        for(var index = 0; index < blockTxs.length; index++) {
+            var txInfo: any = await Transaction.getInfo((blockTxs.at(index) as string));
+            retryCounter = 0;
+
+            while(txInfo.error && retryCounter < 3) {
+                txInfo = await Transaction.getInfo((blockTxs.at(index) as string));
+                retryCounter += 1;
+            }
+            
+            if(txInfo.error) { continue; }
+            const d = txInfo.data;
+            txsInfo.push({
+                txid: d.txid,
+                vout: d.vout,
+                time: d.time,
+                height: d.height,
+                blockhash: d.blockhash,
+            });
+        }
+
+        return txsInfo;
     }
 }

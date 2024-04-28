@@ -1,6 +1,7 @@
 import { ChainNativeApi } from "./ChainNativeApi";
 import { ServicePayload, Payload, LatestChainStatePayload } from "../payload/Payload";
 import { ChainNode, ChainNodeState } from "../../models/ChainNode";
+import { Transaction } from "./Transaction";
 import { Block } from "./Block";
 import { Coin } from "./Coin";
 
@@ -152,7 +153,7 @@ export class Blockchain {
     }
 
     static async getCurrentState(blockHeightOrHash?: string): Promise<LatestChainStatePayload> {
-        const lastProcessedHeight = Blockchain.lastProcessedHeight;
+        // const lastProcessedHeight = Blockchain.lastProcessedHeight;
 
         if(blockHeightOrHash == undefined) {
             const currentHeight = await Blockchain.getHeight();
@@ -173,7 +174,7 @@ export class Blockchain {
         blockSummary.txs.map((e: string) => { if(!blockTxs.includes(e)) { blockTxs.unshift(e); } });
 
         Blockchain.lastProcessedHeight = chainHeight;
-        const txsInfo = await Block.getTxsInfo(blockTxs);
+        const txsInfo = await Transaction.getBlockTxsInfoSummary(blockTxs);
 
         const chainStatusSummary = await Blockchain.getStatusSummary();
         if(chainStatusSummary == undefined) { return undefined; }
@@ -209,7 +210,8 @@ export class Blockchain {
             longestChain: summary.longestchain,
             blockHash: currentBlockHash,
             longestChainBlockHash: longestChainHash,
-            syncPercentage: undefined
+            syncPercentage: undefined,
+            message: undefined,
         });
 
         return ChainNode.getState();

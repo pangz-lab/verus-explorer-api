@@ -12,7 +12,7 @@ export class Address {
 
         const resBody: ServicePayload = await PayloadCache.get<ServicePayload>({
             source: async () => await AddressService.getTxIds(address),
-            onErrorCheck: (r) => r == undefined || (r != undefined && r.error),
+            onReturnUndefinedIf: (r) => r == undefined || (r != undefined && r.error),
             key: cacheKey,
             ttl: ttl
         });
@@ -32,7 +32,7 @@ export class Address {
 
         const resBody: ServicePayload = await PayloadCache.get<ServicePayload>({
             source: async () => await AddressService.getBalance(address),
-            onErrorCheck: (r) => r == undefined || (r != undefined && r.error),
+            onReturnUndefinedIf: (r) => r == undefined || (r != undefined && r.error),
             key: cacheKey,
             ttl: ttl
         });
