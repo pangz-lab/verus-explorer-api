@@ -1,16 +1,16 @@
 import { Request, Response } from 'express';
-import { RpcRequestBody } from 'verusd-rpc-ts-client/lib/types/RpcRequest';
 import { PayloadCache } from '../services/caching/Caching';
 import { CacheKeys } from '../services/caching/CacheKeys';
 import { ServicePayload } from '../services/payload/Payload';
 import { IdentityService } from "../services/chain/IdentityService";
 import { IdentityValidator } from '../services/Validator';
 import { Logger } from '../services/Logger';
+import { HttpRequestPayload } from '../models/HttpRequestPayload';
 
 export class IdentityController {
     static async info(req: Request, res: Response) {
         try {
-            const body = req.body as RpcRequestBody;
+            const body = req.body as HttpRequestPayload;
             const identityValue = body.params![0]!.toString();
             const height = body.params![1]! != undefined? parseInt(body.params![1]!.toString()) : undefined;
 

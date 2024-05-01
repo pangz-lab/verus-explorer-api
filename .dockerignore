@@ -1,0 +1,10 @@
+Dockerfile
+LICENSE
+README.md
+.gitignore
+.nvmrc
+error.log
+jest.config.js
+node_modules
+compose.yaml
+ecosystem.config.js

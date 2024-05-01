@@ -1,14 +1,14 @@
-import 'dotenv/config';
 import fs from 'node:fs';
+import { AppConfig } from './AppConfig';
 
 export class Logger {
     private static errorLog: string;
     private static getErrorLog(): string {
         if(Logger.errorLog === undefined) {
-            if(process.env.ERROR_LOG === undefined) {
+            if(AppConfig.get().logging.errorLog === undefined) {
                 throw new Error("Error log is not configured. Add the value for ERROR_LOG environment variable.");
             }
-            Logger.errorLog = process.env.ERROR_LOG!;
+            Logger.errorLog = AppConfig.get().logging.errorLog;
         }
         return Logger.errorLog;
     }

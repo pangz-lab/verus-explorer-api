@@ -1,5 +1,4 @@
 import { Request, Response } from 'express';
-import { RpcRequestBody } from "verusd-rpc-ts-client/lib/types/RpcRequest";
 import { CacheKeys } from '../services/caching/CacheKeys';
 import { PayloadCache } from '../services/caching/Caching';
 import { ServicePayload } from '../services/payload/Payload';
@@ -7,12 +6,13 @@ import { BlockService } from "../services/chain/BlockService";
 import { Hashing } from '../services/Hashing';
 import { Logger } from '../services/Logger';
 import { TransactionValidator } from '../services/Validator';
+import { HttpRequestPayload } from '../models/HttpRequestPayload';
 
  export class BlockController {
     static async generated(req: Request, res: Response) {
         try {
-            const body = req.body as RpcRequestBody;
-            const hashList = body.params! as string[];
+            const body = req.body as HttpRequestPayload;
+            const hashList = body.params as string[];
             if(!BlockController.isHashListValid(hashList)) { return res.status(400).send("Invalid request!"); }
 
             const hashlistChecksum = Hashing.createChecksum(hashList.toString());
@@ -38,7 +38,7 @@ import { TransactionValidator } from '../services/Validator';
         try {
             
             // NOTE: Caching is conditional here
-            const body = req.body as RpcRequestBody;
+            const body = req.body as HttpRequestPayload;
             if(Number.isNaN(body.params![0]) || Number.isNaN(body.params![1])) {
                 return res.status(400).send("Invalid request!");
             }

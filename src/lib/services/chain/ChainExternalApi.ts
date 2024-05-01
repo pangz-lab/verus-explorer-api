@@ -1,12 +1,12 @@
-import 'dotenv/config';
 import axios from 'axios';
+import { AppConfig } from '../AppConfig';
 
 export class ChainExternalApi {
-    private static readonly url = process.env.EXT_API_HOST!.toString();
+    private static readonly url = AppConfig.get().nodeApi.host;
     private static createPayload(): Record<string, string> {
         return {
             'Content-Type': 'application/json',
-            "Authorization": process.env.EXT_API_AUTH_TOKEN!.toString()
+            "Authorization": AppConfig.get().nodeApi.authToken
         }
     }
 

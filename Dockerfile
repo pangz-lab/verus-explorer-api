@@ -1,17 +1,15 @@
-FROM node:lts-alpine
-ENV LAST_UPDATED 20240410
-
-# Copy source code
-COPY . /app
+FROM node:lts-alpine as base
 
 # Change working directory
 WORKDIR /app
 
+# Copy source code
+COPY . .
+
 # Install dependencies
-RUN npm install
+ENV NODE_ENV=PRODUCTION
+RUN npm install && npm run build && cp .env ./dist/.env
 
-# Expose API port to the outside
 EXPOSE 2220
-
 # Launch application
-CMD ["npm","start"]
+CMD ["node","./dist/index.js"]
