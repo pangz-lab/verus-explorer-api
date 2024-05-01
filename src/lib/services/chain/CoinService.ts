@@ -1,7 +1,7 @@
 import { Payload } from "../payload/Payload";
 import { ChainNativeApi } from "./ChainNativeApi";
 
-export class Coin {
+export class CoinService {
     static async getSupplyInfo(): Promise<Object> {
         try {
             var data: any;
@@ -15,12 +15,12 @@ export class Coin {
             }
             
             data = response.data.result;
-            if(data == undefined) { return Payload.withError(); }
+            if(data === undefined) { return Payload.withError(); }
 
             return Payload.withSuccess(data);
         } catch(e) {
             Payload.logError(
-                'fetch coin supply info',
+                'fetch coin supply info - [Exception] : ' + e,
                 `Data: -`,
                 `getSupplyInfo`);
             return Payload.withError();

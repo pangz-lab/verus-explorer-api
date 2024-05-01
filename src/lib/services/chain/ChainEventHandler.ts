@@ -1,6 +1,6 @@
 import { EventData } from "verus-zmq-client";
 import { LatestChainStatePayload } from "../payload/Payload";
-import { Blockchain as BlockchainService } from "./Blockchain";
+import { BlockchainService as BlockchainService } from "./BlockchainService";
 
 export class ChainEventHandler {
     static async onNewBlockAdded(value: EventData)

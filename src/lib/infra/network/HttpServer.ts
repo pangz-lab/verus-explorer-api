@@ -48,7 +48,7 @@ export class HttpServer implements ServerInterface {
     }
 
     private attachWsServerConnection(httpServer: http.Server): void {
-        if(this.wsServer!.socket == undefined) {
+        if(this.wsServer!.socket === undefined) {
             throw new Error("Websocket Server is not running.");
         }
         const wss = this.wsServer!.socket;

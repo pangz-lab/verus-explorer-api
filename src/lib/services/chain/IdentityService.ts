@@ -1,7 +1,7 @@
 import { ServicePayload, Payload } from "../payload/Payload";
 import { ChainNativeApi } from "./ChainNativeApi";
 
-export class Identity {
+export class IdentityService {
     static async getInfo(identityValue: string, height?: number): Promise<ServicePayload> {
         try {
             var data: any;
@@ -15,12 +15,12 @@ export class Identity {
             }
             
             data = response.data.result;
-            if(data == undefined) { return Payload.withError(); }
+            if(data === undefined) { return Payload.withError(); }
 
             return Payload.withSuccess(data);
         } catch(e) {
             Payload.logError(
-                'fetch identity info',
+                'fetch identity info - [Exception] : ' + e,
                 `Identity: ${identityValue}`,
                 `getInfo`);
             return Payload.withError();

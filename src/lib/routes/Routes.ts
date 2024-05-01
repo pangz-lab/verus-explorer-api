@@ -1,10 +1,10 @@
 import { Express } from 'express';
-import { Block as BlockController } from "../controllers/Block";
-import { Address as AddressController } from "../controllers/Address";
-import { Identity as IdentityController } from "../controllers/Identity";
-import { Blockchain as BlockchainController } from "../controllers/Blockchain";
-import { Transaction as TransactionController } from "../controllers/Transaction";
-import { Search  as SearchController } from '../controllers/Search';
+import { BlockController } from "../controllers/BlockController";
+import { SearchController } from '../controllers/SearchController';
+import { AddressController } from "../controllers/AddressController";
+import { IdentityController } from "../controllers/IdentityController";
+import { BlockchainController } from "../controllers/BlockchainController";
+import { TransactionController } from "../controllers/TransactionController";
 
 export class Routes {
     static generate(app: Express): void {

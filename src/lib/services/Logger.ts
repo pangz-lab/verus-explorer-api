@@ -4,8 +4,8 @@ import fs from 'node:fs';
 export class Logger {
     private static errorLog: string;
     private static getErrorLog(): string {
-        if(Logger.errorLog == undefined) {
-            if(process.env.ERROR_LOG == undefined) {
+        if(Logger.errorLog === undefined) {
+            if(process.env.ERROR_LOG === undefined) {
                 throw new Error("Error log is not configured. Add the value for ERROR_LOG environment variable.");
             }
             Logger.errorLog = process.env.ERROR_LOG!;

@@ -1,9 +1,9 @@
 import { ChainNativeApi } from "./ChainNativeApi";
 import { ServicePayload, Payload, LatestChainStatePayload } from "../payload/Payload";
 import { ChainNode, ChainNodeState } from "../../models/ChainNode";
-import { Transaction } from "./Transaction";
-import { Block } from "./Block";
-import { Coin } from "./Coin";
+import { TransactionService } from "./TransactionService";
+import { BlockService } from "./BlockService";
+import { CoinService } from "./CoinService";
 
 export type BlockchainStatusSummary = {
     VRSCversion: string,
@@ -19,7 +19,7 @@ export type BlockchainStatusSummary = {
     circulatingZSupply: number,
 }
 
-export class Blockchain {
+export class BlockchainService {
     private static lastProcessedHeight = 0;
 
     static async getInfo(): Promise<ServicePayload> {
@@ -35,12 +35,12 @@ export class Blockchain {
             }
             
             data = response.data.result;
-            if(data == undefined) { return Payload.withError(); }
+            if(data === undefined) { return Payload.withError(); }
 
             return Payload.withSuccess(data);
         } catch(e) {
             Payload.logError(
-                'fetch blockchain info',
+                'fetch blockchain info - [Exception] : ' + e,
                 `Data: -`,
                 `getInfo`); 
             return Payload.withError();
@@ -60,12 +60,12 @@ export class Blockchain {
             }
             
             data = response.data.result;
-            if(data == undefined) { return Payload.withError(); }
+            if(data === undefined) { return Payload.withError(); }
 
             return Payload.withSuccess(data);
         } catch(e) {
             Payload.logError(
-                'fetch mining info',
+                'fetch mining info - [Exception] : ' + e,
                 `Data: -`,
                 `getMiningInfo`);
             return Payload.withError();
@@ -85,10 +85,10 @@ export class Blockchain {
             }
             
             data = response.data.result;
-            if(data == undefined) { return Payload.withError(); }
+            if(data === undefined) { return Payload.withError(); }
         } catch(e) {
             Payload.logError(
-                'fetch blockchain height',
+                'fetch blockchain height - [Exception] : ' + e,
                 `Data: -`,
                 `getHeight`); 
             return Payload.withError();
@@ -100,9 +100,9 @@ export class Blockchain {
     static async getStatus(): Promise<ServicePayload> {
         try {
             var requests = [
-                Blockchain.getInfo(),
-                Blockchain.getMiningInfo(),
-                Coin.getSupplyInfo()
+                BlockchainService.getInfo(),
+                BlockchainService.getMiningInfo(),
+                CoinService.getSupplyInfo()
             ];
 
             const result: any = await Promise.all(requests);
@@ -119,15 +119,15 @@ export class Blockchain {
             return Payload.withSuccess(result);
         } catch (e) {
             Payload.logError(
-                'fetch blockchain status',
+                'fetch blockchain status - [Exception] : ' + e,
                 `Data: -`,
                 `getStatus`);
         }
     }
 
     static async getStatusSummary(): Promise<ServicePayload> {
-        const result: ServicePayload = await Blockchain.getStatus();
-        if(result == undefined || result!.error) { return undefined; }
+        const result: ServicePayload = await BlockchainService.getStatus();
+        if(result === undefined || result!.error) { return undefined; }
 
         const statsData: any = result.data;
         const r1 = statsData.at(0)!.data;
@@ -153,33 +153,31 @@ export class Blockchain {
     }
 
     static async getCurrentState(blockHeightOrHash?: string): Promise<LatestChainStatePayload> {
-        // const lastProcessedHeight = Blockchain.lastProcessedHeight;
-
-        if(blockHeightOrHash == undefined) {
-            const currentHeight = await Blockchain.getHeight();
-            if(currentHeight == undefined || currentHeight.error) { return undefined; }
+        if(blockHeightOrHash === undefined) {
+            const currentHeight = await BlockchainService.getHeight();
+            if(currentHeight === undefined || currentHeight.error) { return undefined; }
             blockHeightOrHash = currentHeight.data.toString();
         }
 
-        const blockInfo: any = await Block.getInfo(blockHeightOrHash as string);
-        if(blockInfo == undefined || blockInfo.error || !blockInfo.data) { return undefined; }
+        const blockInfo: any = await BlockService.getInfo(blockHeightOrHash as string);
+        if(blockInfo === undefined || blockInfo.error || !blockInfo.data) { return undefined; }
     
         const chainHeight: number = blockInfo.data.height;
-        if(Blockchain.lastProcessedHeight >= chainHeight) { return undefined; }
+        if(BlockchainService.lastProcessedHeight >= chainHeight) { return undefined; }
 
-        const blockSummary: any = await Block.getBasicInfo(blockInfo.data);
+        const blockSummary: any = await BlockService.getBasicInfo(blockInfo.data);
         if(blockSummary === undefined) { return undefined; }
         
         var blockTxs: string[] = [];
         blockSummary.txs.map((e: string) => { if(!blockTxs.includes(e)) { blockTxs.unshift(e); } });
 
-        Blockchain.lastProcessedHeight = chainHeight;
-        const txsInfo = await Transaction.getBlockTxsInfoSummary(blockTxs);
+        BlockchainService.lastProcessedHeight = chainHeight;
+        const txsInfo = await TransactionService.getBlockTxsInfoSummary(blockTxs);
 
-        const chainStatusSummary = await Blockchain.getStatusSummary();
-        if(chainStatusSummary == undefined) { return undefined; }
+        const chainStatusSummary = await BlockchainService.getStatusSummary();
+        if(chainStatusSummary === undefined) { return undefined; }
         
-        const chainState = await Blockchain.setChainState(chainStatusSummary, blockSummary.hash);
+        const chainState = await BlockchainService.setChainState(chainStatusSummary, blockSummary.hash);
 
         const latestBlock = { data: blockSummary, error: false };
         const latestTxs = { data: txsInfo, error: false };
@@ -199,8 +197,8 @@ export class Blockchain {
         const summary = chainStatusSummary!.data as BlockchainStatusSummary;
         var longestChainHash = currentBlockHash;
         if(summary.blocks != summary.longestchain) {
-            const longestChainInfo: any = await Block.getInfo(summary.longestchain.toString());
-            if(longestChainInfo == undefined || longestChainInfo.error || !longestChainInfo.data) {
+            const longestChainInfo: any = await BlockService.getInfo(summary.longestchain.toString());
+            if(longestChainInfo === undefined || longestChainInfo.error || !longestChainInfo.data) {
                 longestChainHash = "-1";
             }
         }

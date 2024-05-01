@@ -1,7 +1,7 @@
 import { ServicePayload, Payload } from "../payload/Payload";
 import { ChainNativeApi } from "./ChainNativeApi";
 
-export class Address {
+export class AddressService {
     static async getTxIds(address: string): Promise<ServicePayload> {
         try {
             var data: any;
@@ -15,12 +15,12 @@ export class Address {
             }
             
             data = response.data.result;
-            if(data == undefined) { return Payload.withError(); }
+            if(data === undefined) { return Payload.withError(); }
             
             return Payload.withSuccess(data);
         } catch(e) {
             Payload.logError(
-                'fetch address txids',
+                'fetch address txids - [Exception] : ' + e,
                 `Address: ${address}`,
                 `getTxIds`);
             return Payload.withError();
@@ -40,11 +40,11 @@ export class Address {
             }
             
             data = response.data.result;
-            if(data == undefined) { return Payload.withError(); }
+            if(data === undefined) { return Payload.withError(); }
             return Payload.withSuccess(data);
         } catch(e) {
             Payload.logError(
-                'fetch address balance',
+                'fetch address balance - [Exception] : ' + e,
                 `Address: ${address}`,
                 `getBalance`);
             return Payload.withError();

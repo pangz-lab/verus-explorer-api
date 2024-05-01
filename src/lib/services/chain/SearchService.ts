@@ -1,6 +1,6 @@
 import { Payload, ServicePayload } from "../payload/Payload";
 import { AddressType, AddressValidator, IdentityValidator } from "../Validator";
-import { Transaction } from "./Transaction";
+import { TransactionService } from "./TransactionService";
 
 enum QueryValueType {
     unknown = "0",
@@ -11,7 +11,7 @@ enum QueryValueType {
     txHash = "txHash",
 }
 
-export class Search {
+export class SearchService {
     static async findQuery(q: string): Promise<ServicePayload> {
         var result = {
             type: QueryValueType.unknown,
@@ -44,7 +44,7 @@ export class Search {
             }
 
             if(q.length <= 80 && IdentityValidator.isValidTxHash(q)) {
-                data = await Transaction.getInfo(q);
+                data = await TransactionService.getInfo(q);
                 result.type = (!data.error)? 
                     QueryValueType.txHash : 
                     (q.length < 12)? 
@@ -57,7 +57,7 @@ export class Search {
             return Payload.withError(result);
         } catch(e) {
             Payload.logError(
-                'search info',
+                'search info - [Exception] : ' + e,
                 `Query: ${q}`,
                 `findQuery`);
             return Payload.withError(result);

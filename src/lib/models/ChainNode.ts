@@ -24,7 +24,7 @@ export class ChainNode {
     }
 
     static setState(state: ChainNodeState): void {
-        if(state.syncPercentage == undefined) {
+        if(state.syncPercentage === undefined) {
             const syncPercentage = state.blocks == state.longestChain?
             100 : 
             (state.blocks < state.longestChain) ?

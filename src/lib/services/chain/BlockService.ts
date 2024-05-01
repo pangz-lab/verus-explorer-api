@@ -2,7 +2,7 @@ import { ServicePayload, Payload } from "../payload/Payload";
 import { ChainNativeApi } from "./ChainNativeApi";
 
 
-export class Block {
+export class BlockService {
     static async getInfo(blockHeightOrHash: string | number): Promise<ServicePayload> {
         try {
             var data: any;
@@ -16,12 +16,12 @@ export class Block {
             }
 
             data = response.data.result;
-            if(data.height == undefined) { return Payload.withError(); }
+            if(data.height === undefined) { return Payload.withError(); }
 
             return Payload.withSuccess(data);
         } catch(e) {
             Payload.logError(
-                'fetch block info',
+                'fetch block info - [Exception] : ' + e,
                 `Data: ${blockHeightOrHash}`,
                 `getInfo`);
             return Payload.withError();
@@ -44,12 +44,12 @@ export class Block {
             }
             
             data = response.data.result;
-            if(data == undefined || data.length === 0) { return Payload.withError(); }
+            if(data === undefined || data.length === 0) { return Payload.withError(); }
 
             return Payload.withSuccess(data);
         } catch(e) {
             Payload.logError(
-                'fetch block hashes',
+                'fetch block hashes - [Exception] : ' + e,
                 `Range: ${rangeLabel}`,
                 `getHashesByRange`);
             return Payload.withError();
@@ -76,9 +76,10 @@ export class Block {
                 data = response.data.result;
             } catch(e) {
                 Payload.logError(
-                    'fetch block from hash',
+                    'fetch block from hash - [Exception] : ' + e,
                     `Hash: ${currentHash}`,
                     `getGeneratedFromHash`);
+                continue;
             }
 
             result.push({
@@ -94,16 +95,16 @@ export class Block {
     static async getSummary(blockHeight: number): Promise<undefined | Object> {
         try {
             var data: any;
-            const blockInfo: any = await Block.getInfo(blockHeight);
+            const blockInfo: any = await BlockService.getInfo(blockHeight);
             if(blockInfo.error) { throw new Error("Error found while getting the block information."); }
             
-            data = await Block.getBasicInfo(blockInfo.data);
-            if(data == undefined) { throw new Error("Error found while saving the block summary."); }
+            data = await BlockService.getBasicInfo(blockInfo.data);
+            if(data === undefined) { throw new Error("Error found while saving the block summary."); }
             
             return data;
         } catch (e) {
             Payload.logError(
-                'get the block summary',
+                'get the block summary - [Exception] : ' + e,
                 `Error: ${e}`,
                 `getSummary`);
             return undefined;
@@ -134,7 +135,7 @@ export class Block {
             return data;
         } catch (e) {
             Payload.logError(
-                'get the block basic info',
+                'get the block basic info - [Exception] : ' + e,
                 `Error: ${e}`,
                 `getBasicInfo`); 
             return undefined;

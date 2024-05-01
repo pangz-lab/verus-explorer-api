@@ -9,7 +9,7 @@ export type BlockTxInfoSummary = {
     blockhash: string,
 }
 
-export class Transaction {
+export class TransactionService {
     static async getInfo(txHash: string): Promise<ServicePayload> {
         try {
             var data: any;
@@ -23,12 +23,12 @@ export class Transaction {
             }
 
             data = response.data.result;
-            if(data == undefined) { return Payload.withError();}
+            if(data === undefined) { return Payload.withError();}
 
             return Payload.withSuccess(data);
         } catch(e) {
             Payload.logError(
-                'fetch transaction info',
+                'fetch transaction info - [Exception] : ' + e,
                 `Data: ${txHash!}`,
                 `getInfo`); 
             return Payload.withError();
@@ -48,12 +48,12 @@ export class Transaction {
             }
             
             data = response.data.result;
-            if(data == undefined) { return Payload.withError(); }
+            if(data === undefined) { return Payload.withError(); }
 
             return Payload.withSuccess(data);
         } catch (e) {
             Payload.logError(
-                'fetch decoded block raw transaction',
+                'fetch decoded block raw transaction - [Exception] : ' + e,
                 `Key: -`,
                 `decodeRaw`);
             return Payload.withError();
@@ -64,11 +64,11 @@ export class Transaction {
         var txsInfo = [];
         var retryCounter = 0;
         for(var index = 0; index < blockTxs.length; index++) {
-            var txInfo: any = await Transaction.getInfo((blockTxs.at(index) as string));
+            var txInfo: any = await TransactionService.getInfo((blockTxs.at(index) as string));
             retryCounter = 0;
 
             while(txInfo.error && retryCounter < 3) {
-                txInfo = await Transaction.getInfo((blockTxs.at(index) as string));
+                txInfo = await TransactionService.getInfo((blockTxs.at(index) as string));
                 retryCounter += 1;
             }
             

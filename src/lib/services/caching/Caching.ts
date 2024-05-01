@@ -39,7 +39,7 @@ export class Caching {
     }
 
     static disconnect(): void {
-        if(Caching.instance == undefined) { return; }
+        if(Caching.instance === undefined) { return; }
         (Caching.instance as RedisCaching).disconnect()!;
     }
 
@@ -66,7 +66,7 @@ export class PayloadCache {
         }
 
         var resBody = await Caching.get<T>(p.key);
-        if(resBody == undefined) {
+        if(resBody === undefined) {
             resBody = await p.source();
             if(p.onReturnUndefinedIf(resBody as T)) { return undefined; }
             Caching.set(p.key, resBody, p.ttl);

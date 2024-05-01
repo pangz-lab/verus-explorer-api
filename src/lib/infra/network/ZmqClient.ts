@@ -68,11 +68,11 @@ export class ZmqClient {
                     const data = await ChainEventHandler.onNewBlockAdded(value);
                     await PayloadCache.save<ServicePayload>({
                         source: async () => {
-                            return (data == undefined)?
+                            return (data === undefined)?
                                 Payload.withError():
                                 Payload.withSuccess(data);
                         },
-                        onReturnUndefinedIf: (r) => r == undefined || (r != undefined && r.error),
+                        onReturnUndefinedIf: (r) => r === undefined || (r != undefined && r.error),
                         key: cacheKey,
                         ttl: ttl
                     });

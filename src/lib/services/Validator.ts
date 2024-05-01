@@ -4,6 +4,15 @@ export enum AddressType {
     zAddress,
     unknown
 }
+
+
+export class TransactionValidator {
+    static isValidHash(input: string): boolean {
+        const regex = /^[a-zA-Z0-9]+$/;
+        return regex.test(input);
+    }
+}
+
 export class IdentityValidator {
     static isValidVerusId(input: string): boolean {
         const regex = /^[^/:*?"<>|@.]+$/;
