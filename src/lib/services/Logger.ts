@@ -1,5 +1,5 @@
 import fs from 'node:fs';
-import { AppConfig } from './AppConfig';
+import { AppConfig } from '../../AppConfig';
 
 export class Logger {
     private static errorLog: string;

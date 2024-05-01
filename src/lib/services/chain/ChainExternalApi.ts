@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { AppConfig } from '../AppConfig';
+import { AppConfig } from '../../../AppConfig';
 
 export class ChainExternalApi {
     private static readonly url = AppConfig.get().nodeApi.host;

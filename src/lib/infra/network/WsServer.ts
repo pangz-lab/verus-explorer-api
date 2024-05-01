@@ -43,6 +43,7 @@ export class WsServer
 
     open(): WsServer {
         this.wss = new WebSocketServer(this.config);
+        console.log("WS Server started ...");
         return this;
     }
 

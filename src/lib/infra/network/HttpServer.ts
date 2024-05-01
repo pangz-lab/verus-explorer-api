@@ -44,6 +44,7 @@ export class HttpServer implements ServerInterface {
         
         const httpServer = this.expressApp.listen(this.port!);
         this.attachWsServerConnection(httpServer);
+        console.log("HTTP and WS Server running in port " + this.port! + "...");
         return this;
     }
 

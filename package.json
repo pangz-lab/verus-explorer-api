@@ -8,8 +8,7 @@
     "start": "npm run build && node dist/index.js",
     "dev": "NODE_OPTIONS='--trace-warnings' nodemon src/index.ts",
     "dev_varrr": "NODE_OPTIONS='--trace-warnings' nodemon src/index_varrr.ts",
-    "devpm2BK": "pm2 start nodemon --name 'dev-vexp-api' -- src/index.ts",
-    "devpm2": "pm2 start --name 'dev-vexp-api' -- src/index.ts"
+    "devpm2": "pm2 start nodemon --name 'dev-vexp-api' -- src/index.ts"
   },
   "author": "Pangz",
   "license": "MIT",
