@@ -1,5 +1,5 @@
 import { EventData } from "verus-zmq-client";
-import { LatestChainStatePayload } from "../payload/Payload";
+import { LatestChainStatePayload } from "../Payload";
 import { BlockchainService as BlockchainService } from "./BlockchainService";
 
 export class ChainEventHandler {

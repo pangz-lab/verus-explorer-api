@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { PayloadCache } from '../services/caching/Caching';
 import { CacheKeys } from '../services/caching/CacheKeys';
-import { ServicePayload } from '../services/payload/Payload';
+import { ServicePayload } from '../services/Payload';
 import { Hashing } from '../services/Hashing';
 import { SearchService } from "../services/chain/SearchService";
 import { Logger } from '../services/Logger';

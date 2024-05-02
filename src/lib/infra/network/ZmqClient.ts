@@ -9,7 +9,7 @@ import {
 import { WsServer } from "./WsServer";
 import { ChainEventHandler } from "../../services/chain/ChainEventHandler";
 import { PayloadCache } from "../../services/caching/Caching";
-import { Payload, ServicePayload } from "../../services/payload/Payload";
+import { Payload, ServicePayload } from "../../services/Payload";
 import { CacheKeys } from "../../services/caching/CacheKeys";
 import { Logger } from "../../services/Logger";
 

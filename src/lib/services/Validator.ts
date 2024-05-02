@@ -5,7 +5,6 @@ export enum AddressType {
     unknown
 }
 
-
 export class TransactionValidator {
     static isValidHash(input: string): boolean {
         const regex = /^[a-zA-Z0-9]+$/;

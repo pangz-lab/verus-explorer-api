@@ -1,5 +1,5 @@
 import { ChainNativeApi } from "./ChainNativeApi";
-import { ServicePayload, Payload, LatestChainStatePayload } from "../payload/Payload";
+import { ServicePayload, Payload, LatestChainStatePayload } from "../Payload";
 import { ChainNode, ChainNodeState } from "../../models/ChainNode";
 import { TransactionService } from "./TransactionService";
 import { BlockService } from "./BlockService";

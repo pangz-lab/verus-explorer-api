@@ -1,4 +1,4 @@
-import { Payload } from "../payload/Payload";
+import { Payload } from "../Payload";
 import { ChainNativeApi } from "./ChainNativeApi";
 
 export class CoinService {

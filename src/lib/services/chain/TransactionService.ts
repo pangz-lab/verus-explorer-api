@@ -1,4 +1,4 @@
-import { ServicePayload, Payload } from "../payload/Payload";
+import { ServicePayload, Payload } from "../Payload";
 import { ChainNativeApi } from "./ChainNativeApi";
 
 export type BlockTxInfoSummary = {

@@ -1,6 +1,6 @@
 import 'dotenv/config';
 export type ConfigData = {
-    chainSource: string,
+    chain: string,
     localServerPort: number,
     chainNode: {
         walletId: string,
@@ -30,7 +30,7 @@ export type ConfigData = {
 
 export class AppConfig {
     private static kv: ConfigData = {
-        chainSource: process.env.CHAIN_SOURCE!,
+        chain: process.env.CHAIN_SOURCE!,
         localServerPort: parseInt(process.env.LOCAL_SERVER_PORT!),
         chainNode: {
             walletId: process.env.NODE_WALLET_ID!,
@@ -57,6 +57,10 @@ export class AppConfig {
             debugLog: process.env.DEBUG_LOG!
         }
     };
+
+    static set(kv: ConfigData): void {
+        AppConfig.kv = kv;
+    }
 
     static get(): ConfigData {
         if(AppConfig.kv === undefined) {

@@ -1,4 +1,4 @@
-import { Logger } from "../Logger";
+import { Logger } from "./Logger";
 
 export type ServicePayload = undefined | SuccessPayload | ErrorPayload;
 export type SuccessPayload = {

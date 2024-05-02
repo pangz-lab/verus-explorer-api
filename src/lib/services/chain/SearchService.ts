@@ -1,4 +1,4 @@
-import { Payload, ServicePayload } from "../payload/Payload";
+import { Payload, ServicePayload } from "../Payload";
 import { AddressType, AddressValidator, IdentityValidator } from "../Validator";
 import { TransactionService } from "./TransactionService";
 

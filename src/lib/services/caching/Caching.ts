@@ -28,7 +28,7 @@ export class Caching {
                 Caching.instance = new RedisCaching(
                     AppConfig.get().caching.host,
                     AppConfig.get().caching.port,
-                    AppConfig.get().chainSource
+                    AppConfig.get().chain
                 );
                 (Caching.instance as RedisCaching).connect()!;
             } catch (e) {
