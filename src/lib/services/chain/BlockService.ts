@@ -118,19 +118,19 @@ export class BlockService {
             if(data != undefined && data.height) { return data; }
 
             data = {
-                'anchor': blockInfo!.anchor,
-                'bits': blockInfo!.bits,
-                'blocktype': blockInfo!.blocktype,
-                'difficulty': blockInfo!.difficulty,
-                'hash': blockInfo!.hash,
-                'height': blockInfo!.height,
-                'nonce': blockInfo!.nonce,
-                'previousblockhash': blockInfo!.previousblockhash,
-                'size': blockInfo!.size,
-                'segid': blockInfo!.segid,
-                'time': blockInfo!.time,
-                'version': blockInfo!.version,
-                'txs': blockInfo!.tx,
+                anchor: blockInfo!.anchor,
+                bits: blockInfo!.bits,
+                blocktype: blockInfo!.blocktype,
+                difficulty: blockInfo!.difficulty,
+                hash: blockInfo!.hash,
+                height: blockInfo!.height,
+                nonce: blockInfo!.nonce,
+                previousblockhash: blockInfo!.previousblockhash,
+                size: blockInfo!.size,
+                segid: blockInfo!.segid,
+                time: blockInfo!.time,
+                version: blockInfo!.version,
+                txs: blockInfo!.tx,
             }
             return data;
         } catch (e) {

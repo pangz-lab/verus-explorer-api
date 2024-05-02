@@ -4,6 +4,7 @@ import express, { Express } from 'express';
 import { ServerInterface } from '../../models/ServerInterface';
 import { WsServer } from './WsServer';
 import helmet from 'helmet';
+import { Logger } from '../../services/Logger';
 
 export class HttpServer implements ServerInterface {
     private expressApp?: Express;
@@ -44,7 +45,7 @@ export class HttpServer implements ServerInterface {
         
         const httpServer = this.expressApp.listen(this.port!);
         this.attachWsServerConnection(httpServer);
-        console.log("HTTP and WS Server running in port " + this.port! + "...");
+        Logger.toDebugLog("HTTP and WS Server running in port " + this.port! + "...").write();
         return this;
     }
 
@@ -58,7 +59,7 @@ export class HttpServer implements ServerInterface {
             const pathname = request.url;
             if (pathname === '/verus/wss') {
                 wss.handleUpgrade(request, socket, head, function done(ws) {
-                    ws.send("{data: 'connection established'}");
+                    ws.send(JSON.stringify({data: 'connection established'}));
                 });
             } else {
                 socket.destroy();

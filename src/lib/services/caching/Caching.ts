@@ -1,3 +1,4 @@
+import { AppConfig } from "../../../AppConfig";
 import { RedisCaching } from "../../infra/caching/RedisCaching";
 import { CachingServiceInterface } from "../../models/CachingServiceInterface";
 
@@ -8,7 +9,7 @@ type GetParams<T> = {
     ttl: number,
     useCache?: boolean
 }
-type OnErrorCheck<T> = (param: T) => boolean;
+type OnErrorCheck<T> = (sourceResult: T) => boolean;
 
 export class Caching {
     private static instance?: CachingServiceInterface;
@@ -16,7 +17,7 @@ export class Caching {
 
     private static isEnabled(): boolean {
         if(Caching.enable === undefined)  {
-            Caching.enable = (process.env.USE_CACHING?.toString() == 'true') ?? false
+            Caching.enable = AppConfig.get().caching.enabled;
         }
         return Caching.enable;
     }
@@ -24,11 +25,10 @@ export class Caching {
     private static getInstance(): CachingServiceInterface {
         if(Caching.instance === undefined) {
             try {
-                const conf = process.env;
                 Caching.instance = new RedisCaching(
-                    conf.DFLY_DB_HOST!.toString(),
-                    parseInt(conf.DFLY_DB_PORT!),
-                    conf.CHAIN_SOURCE!.toString()
+                    AppConfig.get().caching.host,
+                    AppConfig.get().caching.port,
+                    AppConfig.get().chainSource
                 );
                 (Caching.instance as RedisCaching).connect()!;
             } catch (e) {

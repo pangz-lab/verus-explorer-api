@@ -35,6 +35,6 @@ export class Payload {
             `\n${value}` +
             `\nMethod: ${method}` +
             `\nOther operation will still continue.`
-        );
+        ).write();
     }
 }

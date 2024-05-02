@@ -1,5 +1,6 @@
 import { Redis } from "ioredis";
 import { CachingServiceInterface } from '../../models/CachingServiceInterface';
+import { Logger } from "../../services/Logger";
 
 export class RedisCaching 
 implements CachingServiceInterface {
@@ -16,6 +17,7 @@ implements CachingServiceInterface {
 
     async connect(): Promise<void> {
         this.client = new Redis(this.port, this.host);
+        Logger.toDebugLog(`Caching service is running in ${this.host}:${this.port}`).write();
     }
 
     disconnect(): void { this.client.disconnect(); }

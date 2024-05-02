@@ -4,8 +4,16 @@ import { HttpServer } from './lib/infra/network/HttpServer';
 import { ZmqClient } from './lib/infra/network/ZmqClient';
 import { WsServer } from './lib/infra/network/WsServer';
 import { AppConfig } from './AppConfig';
+import { Logger } from './lib/services/Logger';
 
+const startMessage = `
+
++++++++++++++++++++++++++++++++++++++++++++++++++
++           Starting VerusExplorerApi           +
++++++++++++++++++++++++++++++++++++++++++++++++++
+`;
 try {
+    Logger.toDebugLog(startMessage).write();
     const conf = AppConfig.get();
     const wsServer = new WsServer();
     const httpServer = new HttpServer(conf.localServerPort, wsServer);

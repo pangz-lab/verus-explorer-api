@@ -1,5 +1,6 @@
 import WebSocket, { WebSocketServer } from 'ws';
 import { DuplexServerInterface, ServerInterface } from '../../models/ServerInterface';
+import { Logger } from '../../services/Logger';
 
 type EventsConfig = {
     intervalCheckInSec?: number,
@@ -43,7 +44,7 @@ export class WsServer
 
     open(): WsServer {
         this.wss = new WebSocketServer(this.config);
-        console.log("WS Server started ...");
+        Logger.toDebugLog("WS Server started ...").write();
         return this;
     }
 

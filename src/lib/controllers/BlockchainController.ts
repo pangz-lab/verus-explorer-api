@@ -11,7 +11,7 @@ export class BlockchainController {
             const resBody = await BlockchainService.getInfo();
             res.send(resBody);
         } catch(e) {
-            Logger.toErrorLog('[HTTP Error]'+ (e as string));
+            Logger.toErrorLog('[HTTP Error]'+ (e as string)).write();
             return res.status(500).send("Internal server error!");
         }
     };
@@ -21,7 +21,7 @@ export class BlockchainController {
             const resBody = await BlockchainService.getMiningInfo();
             res.send(resBody);
         } catch(e) {
-            Logger.toErrorLog('[HTTP Error]'+ (e as string));
+            Logger.toErrorLog('[HTTP Error]'+ (e as string)).write();
             return res.status(500).send("Internal server error!");
         }
     }
@@ -42,7 +42,7 @@ export class BlockchainController {
             res.send(resBody);
 
         } catch(e) {
-            Logger.toErrorLog('[HTTP Error]'+ (e as string));
+            Logger.toErrorLog('[HTTP Error]'+ (e as string)).write();
             return res.status(500).send("Internal server error!");
         }
     }
@@ -67,7 +67,7 @@ export class BlockchainController {
             if(resBody === undefined) { return res.status(404).send("Failed to retrieve the data!"); }
             res.send(resBody);
         } catch(e) {
-            Logger.toErrorLog('[HTTP Error]'+ (e as string));
+            Logger.toErrorLog('[HTTP Error]'+ (e as string)).write();
             return res.status(500).send("Internal server error!");
         }
     }

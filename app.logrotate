@@ -1,0 +1,19 @@
+/path/to/your/error.log {
+    rotate 7             # Keep 7 rotated copies
+    daily                # Rotate daily
+    missingok            # If the log file is missing, don't issue an error
+    notifempty           # Do not rotate the log if it's empty
+    compress             # Compress rotated logs with gzip
+    delaycompress        # Delay compression until the next rotation cycle
+    #create 0644 root root  # Set permissions for the rotated log files
+}
+
+/path/to/your/debug.log {
+    rotate 7             # Keep 7 rotated copies
+    daily                # Rotate daily
+    missingok            # If the log file is missing, don't issue an error
+    notifempty           # Do not rotate the log if it's empty
+    compress             # Compress rotated logs with gzip
+    delaycompress        # Delay compression until the next rotation cycle
+    #create 0644 root root  # Set permissions for the rotated log files
+}

@@ -11,6 +11,7 @@ import { ChainEventHandler } from "../../services/chain/ChainEventHandler";
 import { PayloadCache } from "../../services/caching/Caching";
 import { Payload, ServicePayload } from "../../services/payload/Payload";
 import { CacheKeys } from "../../services/caching/CacheKeys";
+import { Logger } from "../../services/Logger";
 
 
 export class ZmqClient {
@@ -47,6 +48,7 @@ export class ZmqClient {
             this.client!
                 .connect()
                 .listen();
+            Logger.toDebugLog("ZMQ Client connected to " + this.host! + ':' + this.port!).write();
         } catch (e) {
             throw new Error("An error occurred while initializing the ZMQ Client.");
         }
@@ -60,7 +62,7 @@ export class ZmqClient {
         const wss = this.wsServer!;
         return {
             onHashBlockReceived: async function (value: EventData): Promise<Object> {
-                console.log("onHashBlockReceived >>" + value);
+                Logger.toDebugLog("onHashBlockReceived >>" + value).write();
                 setTimeout(async function() {
                     const cacheKey = CacheKeys.BlockchainStatus.key;
                     const ttl = CacheKeys.BlockchainStatus.ttl;

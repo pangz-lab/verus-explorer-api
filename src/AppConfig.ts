@@ -16,9 +16,15 @@ export type ConfigData = {
         host: string,
         authToken: string,
     },
-    useCaching: boolean,
+    caching: {
+        enabled: boolean,
+        host: string,
+        port: number,
+    }
     logging: {
+        enabled: boolean
         errorLog: string
+        debugLog: string
     }
 }
 
@@ -40,9 +46,15 @@ export class AppConfig {
             host: process.env.EXT_API_HOST!,
             authToken: process.env.EXT_API_AUTH_TOKEN!,
         },
-        useCaching: process.env.USE_CACHING! == "true" ?? false,
+        caching: {
+            enabled: process.env.USE_CACHING! == "true" ?? false,
+            host: process.env.DFLY_DB_HOST!,
+            port: parseInt(process.env.DFLY_DB_PORT!),
+        },
         logging: {
-            errorLog: process.env.ERROR_LOG!
+            enabled: process.env.ENABLE_LOGGING! == "true" ?? false,
+            errorLog: process.env.ERROR_LOG!,
+            debugLog: process.env.DEBUG_LOG!
         }
     };
 
