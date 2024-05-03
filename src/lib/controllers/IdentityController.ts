@@ -5,26 +5,24 @@ import { ServicePayload } from '../services/Payload';
 import { IdentityService } from "../services/chain/IdentityService";
 import { IdentityValidator } from '../services/Validator';
 import { Logger } from '../services/Logger';
-import { HttpRequestPayload } from '../models/HttpRequestPayload';
 
 export class IdentityController {
     static async info(req: Request, res: Response) {
         try {
-            const body = req.body as HttpRequestPayload;
-            const identityValue = body.params![0]!.toString();
-            const height = body.params![1]! != undefined? parseInt(body.params![1]!.toString()) : undefined;
+            const identity = req.params.id as string;
+            const height = parseInt((req.query.height ?? '').toString());
 
-            if(!IdentityValidator.isValidVerusId(identityValue.replace("@", "")) 
+            if(!IdentityValidator.isValidVerusId(identity.replace('@', '')) 
                 || (height != undefined && Number.isNaN(height))) {
                 return res.status(400).send("Invalid request!");
             }
 
             const keyExt = (height != undefined ? '_' + height?.toString() : '');
-            const cacheKey = CacheKeys.IdentityInfoPrefix.key + identityValue + keyExt;
+            const cacheKey = CacheKeys.IdentityInfoPrefix.key + identity + keyExt;
             const ttl = CacheKeys.IdentityInfoPrefix.ttl;
             
             const resBody: ServicePayload = await PayloadCache.get<ServicePayload>({
-                source: async () => await IdentityService.getInfo(identityValue, height),
+                source: async () => await IdentityService.getInfo(identity, height),
                 onReturnUndefinedIf: (r) => r === undefined || (r != undefined && r.error),
                 key: cacheKey,
                 ttl: ttl

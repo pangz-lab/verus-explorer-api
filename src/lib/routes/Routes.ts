@@ -16,7 +16,7 @@ export class Routes {
         app.get('/api/blockchain/height', BlockchainController.height);
         app.get('/api/blockchain/status', BlockchainController.status);
         app.get('/api/transaction/:txHash/info', TransactionController.info);
-        app.post('/api/identity/info', IdentityController.info);
+        app.get('/api/identity/:id/info', IdentityController.info);
         app.get('/api/address/:address/txids', AddressController.txIds);
         app.get('/api/address/:address/balance', AddressController.balance);
         app.get('/api/search/', SearchController.query);
