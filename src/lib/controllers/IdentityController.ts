@@ -10,10 +10,11 @@ export class IdentityController {
     static async info(req: Request, res: Response) {
         try {
             const identity = req.params.id as string;
-            const height = parseInt((req.query.height ?? '').toString());
+            const startHeightExist = (req.query.height != undefined);
+            const height = !startHeightExist ? undefined : parseInt((req.query.height ?? '').toString());
 
             if(!IdentityValidator.isValidVerusId(identity.replace('@', '')) 
-                || (height != undefined && Number.isNaN(height))) {
+                || (startHeightExist && Number.isNaN(height))) {
                 return res.status(400).send("Invalid request!");
             }
 
