@@ -2,7 +2,7 @@ import { Payload, ServicePayload } from "../Payload";
 import { AddressType, AddressValidator, IdentityValidator } from "../Validator";
 import { TransactionService } from "./TransactionService";
 
-enum QueryValueType {
+export enum QueryValueType {
     unknown = "0",
     verusId = "verusId",
     block = "block",

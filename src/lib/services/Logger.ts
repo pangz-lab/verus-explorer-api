@@ -42,7 +42,7 @@ class LogWriter {
 
     constructor(data: string, filePath?: string) {
         this.filePath = filePath;
-        this.data = (new Date()).toISOString() + ':  ' + data + '\n';
+        this.data = (new Date()).toString() + ':  ' + data + '\n';
     }
 
     write(): void {
