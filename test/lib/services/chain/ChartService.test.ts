@@ -1,6 +1,6 @@
 import { ChartService } from '../../../../src/lib/services/chain/ChartService';
 import { BlockService } from '../../../../src/lib/services/chain/BlockService';
-import { ErrorPayload, Payload, SuccessPayload } from '../../../../src/lib/services/Payload';
+import { Payload } from '../../../../src/lib/services/Payload';
 
 // Mocking BlockService
 jest.mock('../../../../src/lib/services/chain/BlockService');
@@ -18,13 +18,13 @@ describe('ChartService', () => {
             const mockedPayload = { status: 200, data: { result: [] }, error: false };
             (BlockService.getHashesByRange as jest.Mock).mockResolvedValueOnce(Payload.withSuccess(mockedPayload.data));
             const result = await ChartService.getDatasetFromRange(1000, 2000);
-            expect(result).toMatchObject<SuccessPayload>(Payload.withSuccess(mockedPayload.data));
+            expect(result).toMatchObject<any>([]);
         });
 
         it('should return error payload on failure', async () => {
             (BlockService.getHashesByRange as jest.Mock).mockResolvedValueOnce(Payload.withError());
             const result = await ChartService.getDatasetFromRange(1000, 2000);
-            expect(result).toMatchObject<ErrorPayload>(Payload.withError());
+            expect(result).toBe(undefined);
         });
     });
 

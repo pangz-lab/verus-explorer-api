@@ -1,6 +1,21 @@
 import { ServicePayload, Payload } from "../Payload";
 import { ChainNativeApi } from "./ChainNativeApi";
 
+export type BlockBasicInfo = {
+    anchor: string,
+    bits: string,
+    blocktype: string,
+    difficulty: number,
+    hash: string,
+    height: number,
+    nonce: string,
+    previousblockhash: number,
+    size: number,
+    segid: number,
+    time: number,
+    version: number,
+    txs: string[]
+}
 
 export class BlockService {
     static async getInfo(blockHeightOrHash: string | number): Promise<ServicePayload> {
@@ -92,10 +107,10 @@ export class BlockService {
         return Payload.withSuccess(result);
     }
 
-    static async getSummary(blockHeight: number): Promise<undefined | Object> {
+    static async getSummary(blockHeightOrHash: number | string): Promise<undefined | BlockBasicInfo> {
         try {
             var data: any;
-            const blockInfo: any = await BlockService.getInfo(blockHeight);
+            const blockInfo: any = await BlockService.getInfo(blockHeightOrHash);
             if(blockInfo.error) { throw new Error("Error found while getting the block information."); }
             
             data = await BlockService.getBasicInfo(blockInfo.data);
@@ -111,13 +126,12 @@ export class BlockService {
         }
     }
 
-    static async getBasicInfo(blockInfo: any): Promise<undefined | Object> {
+    static async getBasicInfo(blockInfo: any): Promise<undefined | BlockBasicInfo> {
         try {
-            const blockHeight = blockInfo!.height;
             var data: any;
             if(data != undefined && data.height) { return data; }
 
-            data = {
+            return {
                 anchor: blockInfo!.anchor,
                 bits: blockInfo!.bits,
                 blocktype: blockInfo!.blocktype,
@@ -132,7 +146,6 @@ export class BlockService {
                 version: blockInfo!.version,
                 txs: blockInfo!.tx,
             }
-            return data;
         } catch (e) {
             Payload.logError(
                 'get the block basic info - [Exception] : ' + e,

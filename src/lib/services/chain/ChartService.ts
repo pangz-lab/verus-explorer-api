@@ -1,23 +1,33 @@
 import { Payload, ServicePayload } from "../Payload";
-import { BlockService } from "./BlockService";
+import { BlockBasicInfo, BlockService } from "./BlockService";
 
-type DateRange = {
+export type DateRange = {
     start: number,
     end: number,
 }
 
 export class ChartService {
     
-    static async getDatasetFromRange(startTime: number, endTime: number): Promise<ServicePayload> {
+    static async getDatasetFromRange(startTime: number, endTime: number): Promise<undefined | BlockBasicInfo[]> {
         const rangeLabel = startTime.toString() + '_' + endTime.toString();
         try {
-            return BlockService.getHashesByRange(startTime, endTime);
+            const result = await BlockService.getHashesByRange(startTime, endTime);
+            if(result?.error || result?.data == undefined) { return undefined; }
+
+            var data: BlockBasicInfo[] = [];
+            const blockHashes = result!.data as string[];
+            for(var i = 0; i < blockHashes.length; i++) {
+                const r = await BlockService.getSummary(blockHashes.at(i) as string);
+                if(r !== undefined) { data.push(r); }
+            }
+            return data;
+
         } catch(e) {
             Payload.logError(
                 'getting chart data from range - [Exception] : ' + e,
                 `Range: ${rangeLabel}`,
                 `getDatasetFromRange`);
-            return Payload.withError();
+            return undefined;
         }
     }
 
@@ -25,7 +35,7 @@ export class ChartService {
         if(highDate.getTime() < lowDate.getTime()) {
             throw new Error("highDate should be lower than the lowDate");
         }
-        
+
         if(stepsInMinutes < 0) {
             throw new Error("stepsInMinutes should be greater than or equal to zero(0)");
         }
