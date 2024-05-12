@@ -1,4 +1,4 @@
-import { ChartService } from '../../../../src/lib/services/chain/ChartService';
+import { ChartService } from '../../../../src/lib/services/chart/ChartService';
 import { BlockService } from '../../../../src/lib/services/chain/BlockService';
 import { Payload } from '../../../../src/lib/services/Payload';
 

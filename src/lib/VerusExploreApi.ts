@@ -1,7 +1,7 @@
 import { ServerInterface } from "./models/ServerInterface";
 import { HttpServer } from "./infra/network/HttpServer";
 import { ZmqClient } from "./infra/network/ZmqClient";
-import { Routes } from "./routes/Routes";
+import { Routes } from "./api/routes/Routes";
 import { Caching } from "./services/caching/Caching";
 
 export class VerusExplorerApi implements ServerInterface {

@@ -1,12 +1,12 @@
 import { Request, Response } from 'express';
-import { CacheKeys } from '../services/caching/CacheKeys';
-import { PayloadCache } from '../services/caching/Caching';
-import { ServicePayload } from '../services/Payload';
-import { BlockService } from "../services/chain/BlockService";
-import { Hashing } from '../services/Hashing';
-import { Logger } from '../services/Logger';
-import { TransactionValidator } from '../services/Validator';
-import { HttpRequestPayload } from '../models/HttpRequestPayload';
+import { CacheKeys } from '../../services/caching/CacheKeys';
+import { PayloadCache } from '../../services/caching/Caching';
+import { ServicePayload } from '../../services/Payload';
+import { BlockService } from "../../services/chain/BlockService";
+import { Hashing } from '../../services/Hashing';
+import { Logger } from '../../services/Logger';
+import { TransactionValidator } from '../../services/Validator';
+import { HttpRequestPayload } from '../../models/HttpRequestPayload';
 
  export class BlockController {
     static async generated(req: Request, res: Response) {

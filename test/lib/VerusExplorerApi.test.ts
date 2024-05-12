@@ -2,13 +2,13 @@ import { VerusExplorerApi } from '../../src/lib/VerusExploreApi';
 import { ServerInterface } from '../../src/lib/models/ServerInterface';
 import { HttpServer } from '../../src/lib/infra/network/HttpServer';
 import { ZmqClient } from '../../src/lib/infra/network/ZmqClient';
-import { Routes } from '../../src/lib/routes/Routes';
+import { Routes } from '../../src/lib/api/routes/Routes';
 import { Caching } from '../../src/lib/services/caching/Caching';
 import { WsServer } from '../../src/lib/infra/network/WsServer';
 
 jest.mock('../../src/lib/infra/network/HttpServer');
 jest.mock('../../src/lib/infra/network/ZmqClient');
-jest.mock('../../src/lib/routes/Routes');
+jest.mock('../../src/lib/api/routes/Routes');
 jest.mock('../../src/lib/services/caching/Caching');
 
 describe('VerusExplorerApi', () => {

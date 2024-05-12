@@ -1,10 +1,10 @@
 import { Request, Response } from 'express';
-import { PayloadCache } from '../services/caching/Caching';
-import { CacheKeys } from '../services/caching/CacheKeys';
-import { ServicePayload } from '../services/Payload';
-import { IdentityService } from "../services/chain/IdentityService";
-import { IdentityValidator } from '../services/Validator';
-import { Logger } from '../services/Logger';
+import { PayloadCache } from '../../services/caching/Caching';
+import { CacheKeys } from '../../services/caching/CacheKeys';
+import { ServicePayload } from '../../services/Payload';
+import { IdentityService } from "../../services/chain/IdentityService";
+import { IdentityValidator } from '../../services/Validator';
+import { Logger } from '../../services/Logger';
 
 export class IdentityController {
     static async info(req: Request, res: Response) {

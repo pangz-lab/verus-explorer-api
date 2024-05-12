@@ -1,9 +1,9 @@
 import { Request, Response } from 'express';
-import { CacheKeys } from '../services/caching/CacheKeys';
-import { PayloadCache } from '../services/caching/Caching';
-import { Payload, ServicePayload } from '../services/Payload';
-import { BlockchainService } from "../services/chain/BlockchainService";
-import { Logger } from '../services/Logger';
+import { CacheKeys } from '../../services/caching/CacheKeys';
+import { PayloadCache } from '../../services/caching/Caching';
+import { Payload, ServicePayload } from '../../services/Payload';
+import { BlockchainService } from "../../services/chain/BlockchainService";
+import { Logger } from '../../services/Logger';
 
 export class BlockchainController {
     static async info(req: Request, res: Response) {

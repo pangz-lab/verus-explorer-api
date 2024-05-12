@@ -1,5 +1,5 @@
-import { Payload, ServicePayload } from "../Payload";
-import { BlockBasicInfo, BlockService } from "./BlockService";
+import { Payload } from "../Payload";
+import { BlockBasicInfo, BlockService } from "../chain/BlockService";
 
 export type DateRange = {
     start: number,
@@ -7,7 +7,6 @@ export type DateRange = {
 }
 
 export class ChartService {
-    
     static async getDatasetFromRange(startTime: number, endTime: number): Promise<undefined | BlockBasicInfo[]> {
         const rangeLabel = startTime.toString() + '_' + endTime.toString();
         try {

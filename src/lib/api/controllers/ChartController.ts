@@ -1,10 +1,10 @@
 import { Request, Response } from 'express';
-import { PayloadCache } from '../services/caching/Caching';
-import { CacheKeys } from '../services/caching/CacheKeys';
-import { Payload } from '../services/Payload';
-import { ChartService, DateRange } from '../services/chain/ChartService';
-import { Logger } from '../services/Logger';
-import { BlockBasicInfo } from '../services/chain/BlockService';
+import { PayloadCache } from '../../services/caching/Caching';
+import { CacheKeys } from '../../services/caching/CacheKeys';
+import { Payload } from '../../services/Payload';
+import { ChartService, DateRange } from '../../services/chart/ChartService';
+import { Logger } from '../../services/Logger';
+import { BlockBasicInfo } from '../../services/chain/BlockService';
 
 export class ChartController {
     private static cacheDataIntervalInMinutes = 5;
