@@ -20,6 +20,7 @@ export class ChartController {
         "last7Days",
         "last15Days",
         "last30Days",
+        "last90Days",
     ];
 
     static async query(req: Request, res: Response) {
@@ -45,7 +46,7 @@ export class ChartController {
                         // Add 1 second to avoid overlap
                         dateGenerated.value.end + 1
                     ),
-                    onReturnUndefinedIf: (r) => r === undefined,
+                    onAbortSave: (r) => r === undefined,
                     key: cacheKey,
                     ttl: ttl
                 });
@@ -80,6 +81,7 @@ export class ChartController {
             case "last7Days": minutes = 60 * 24 * 7; break;
             case "last15Days": minutes = 60 * 24 * 15; break;
             case "last30Days": minutes = 60 * 24 * 30; break;
+            case "last90Days": minutes = 60 * 24 * 30 * 3; break;
         }
 
         const lowDate = structuredClone(highDate);

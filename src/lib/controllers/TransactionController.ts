@@ -17,7 +17,7 @@ export class TransactionController {
 
             const resBody: ServicePayload = await PayloadCache.get<ServicePayload>({
                 source: async () => await TransactionService.getInfo(txHash),
-                onReturnUndefinedIf: (r) => r === undefined || (r != undefined && r.error),
+                onAbortSave: (r) => r === undefined || (r != undefined && r.error),
                 key: cacheKey,
                 ttl: ttl
             });

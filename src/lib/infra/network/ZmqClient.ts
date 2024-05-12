@@ -74,7 +74,7 @@ export class ZmqClient {
                                 Payload.withError():
                                 Payload.withSuccess(data);
                         },
-                        onReturnUndefinedIf: (r) => r === undefined || (r != undefined && r.error),
+                        onAbortSave: (r) => r === undefined || (r != undefined && r.error),
                         key: cacheKey,
                         ttl: ttl
                     });

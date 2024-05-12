@@ -21,7 +21,7 @@ import { HttpRequestPayload } from '../models/HttpRequestPayload';
 
             const resBody: ServicePayload = await PayloadCache.get<ServicePayload>({
                 source: async () => await BlockService.getGeneratedFromHash(hashList),
-                onReturnUndefinedIf: (r) => r === undefined || (r != undefined && r.error),
+                onAbortSave: (r) => r === undefined || (r != undefined && r.error),
                 key: cacheKey,
                 ttl: ttl
             });
@@ -57,7 +57,7 @@ import { HttpRequestPayload } from '../models/HttpRequestPayload';
 
             const resBody: ServicePayload = await PayloadCache.get<ServicePayload>({
                 source: async () =>  await BlockService.getHashesByRange(start, end),
-                onReturnUndefinedIf: (r) => r === undefined || (r != undefined && r.error),
+                onAbortSave: (r) => r === undefined || (r != undefined && r.error),
                 key: cacheKey,
                 ttl: ttl,
                 useCache: useCache
@@ -79,7 +79,7 @@ import { HttpRequestPayload } from '../models/HttpRequestPayload';
 
             const resBody: ServicePayload = await PayloadCache.get<ServicePayload>({
                 source: async () => await BlockService.getInfo(blockHeightOrHash),
-                onReturnUndefinedIf: (r) => r === undefined || (r != undefined && r.error),
+                onAbortSave: (r) => r === undefined || (r != undefined && r.error),
                 key: cacheKey,
                 ttl: ttl
             });
