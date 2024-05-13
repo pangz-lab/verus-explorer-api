@@ -21,6 +21,6 @@ export class Routes {
         app.get('/api/address/:address/txids', AddressController.txIds);
         app.get('/api/address/:address/balance', AddressController.balance);
         app.get('/api/search/', SearchController.query);
-        app.get('/api/chart/', ChartController.query);
+        app.get('/api/chart/:type/', ChartController.query);
     }
 }

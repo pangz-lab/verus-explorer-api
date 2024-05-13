@@ -17,7 +17,7 @@ export class AddressController {
 
             const resBody: ServicePayload = await PayloadCache.get<ServicePayload>({
                 source: async () => await AddressService.getTxIds(address),
-                onAbortSave: (r) => r === undefined || (r != undefined && r.error),
+                abortSaveOn: (r) => r === undefined || (r != undefined && r.error),
                 key: cacheKey,
                 ttl: ttl
             });
@@ -41,7 +41,7 @@ export class AddressController {
 
             const resBody: ServicePayload = await PayloadCache.get<ServicePayload>({
                 source: async () => await AddressService.getBalance(address),
-                onAbortSave: (r) => r === undefined || (r != undefined && r.error),
+                abortSaveOn: (r) => r === undefined || (r != undefined && r.error),
                 key: cacheKey,
                 ttl: ttl
             });

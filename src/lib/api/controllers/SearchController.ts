@@ -18,7 +18,7 @@ export class SearchController {
             
             const resBody: ServicePayload = await PayloadCache.get<ServicePayload>({
                 source: async () => await SearchService.findQuery(query),
-                onAbortSave: (r) => false,
+                abortSaveOn: (r) => false,
                 key: cacheKey,
                 ttl: ttl
             });

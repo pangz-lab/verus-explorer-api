@@ -21,7 +21,7 @@ import { HttpRequestPayload } from '../../models/HttpRequestPayload';
 
             const resBody: ServicePayload = await PayloadCache.get<ServicePayload>({
                 source: async () => await BlockService.getGeneratedFromHash(hashList),
-                onAbortSave: (r) => r === undefined || (r != undefined && r.error),
+                abortSaveOn: (r) => r === undefined || (r != undefined && r.error),
                 key: cacheKey,
                 ttl: ttl
             });
@@ -36,7 +36,6 @@ import { HttpRequestPayload } from '../../models/HttpRequestPayload';
 
     static async hashes(req: Request, res: Response) {
         try {
-            
             // NOTE: Caching is conditional here
             const body = req.body as HttpRequestPayload;
             if(Number.isNaN(body.params![0]) || Number.isNaN(body.params![1])) {
@@ -57,7 +56,7 @@ import { HttpRequestPayload } from '../../models/HttpRequestPayload';
 
             const resBody: ServicePayload = await PayloadCache.get<ServicePayload>({
                 source: async () =>  await BlockService.getHashesByRange(start, end),
-                onAbortSave: (r) => r === undefined || (r != undefined && r.error),
+                abortSaveOn: (r) => r === undefined || (r != undefined && r.error),
                 key: cacheKey,
                 ttl: ttl,
                 useCache: useCache
@@ -79,7 +78,7 @@ import { HttpRequestPayload } from '../../models/HttpRequestPayload';
 
             const resBody: ServicePayload = await PayloadCache.get<ServicePayload>({
                 source: async () => await BlockService.getInfo(blockHeightOrHash),
-                onAbortSave: (r) => r === undefined || (r != undefined && r.error),
+                abortSaveOn: (r) => r === undefined || (r != undefined && r.error),
                 key: cacheKey,
                 ttl: ttl
             });

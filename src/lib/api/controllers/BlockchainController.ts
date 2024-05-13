@@ -33,7 +33,7 @@ export class BlockchainController {
 
             const resBody: ServicePayload = await PayloadCache.get<ServicePayload>({
                 source: async () => await BlockchainService.getHeight(),
-                onAbortSave: (r) => r === undefined || (r != undefined && r.error),
+                abortSaveOn: (r) => r === undefined || (r != undefined && r.error),
                 key: cacheKey,
                 ttl: ttl
             });
@@ -59,7 +59,7 @@ export class BlockchainController {
                         Payload.withError():
                         Payload.withSuccess(data);
                 },
-                onAbortSave: (r) => r === undefined || (r != undefined && r.error),
+                abortSaveOn: (r) => r === undefined || (r != undefined && r.error),
                 key: cacheKey,
                 ttl: ttl
             });

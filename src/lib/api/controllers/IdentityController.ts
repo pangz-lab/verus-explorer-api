@@ -24,7 +24,7 @@ export class IdentityController {
             
             const resBody: ServicePayload = await PayloadCache.get<ServicePayload>({
                 source: async () => await IdentityService.getInfo(identity, height),
-                onAbortSave: (r) => r === undefined || (r != undefined && r.error),
+                abortSaveOn: (r) => r === undefined || (r != undefined && r.error),
                 key: cacheKey,
                 ttl: ttl
             });
