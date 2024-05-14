@@ -41,14 +41,12 @@ export class ChartController {
     }
 
     private static async getChartData<T>(chartType: string, range: string, dataSource: T): Promise<undefined | ChartData> {
-        const cacheKey = CacheKeys.ChartDispDataPrefix.key + ':' + range + '_' + chartType;
+        const cacheKey = CacheKeys.ChartDispDataPrefix.key + ':' + chartType + '_' + range;
         const ttl = ChartDataFactory.allowedRange[range].cacheTtl;
-        const dataIntervalInMinutes = ChartDataFactory.allowedRange[range].dataIntervalInMinutes;
+        const dataIntervalInMinutes = ChartDataFactory.allowedRange[range].xLabelIntervalInMinutes;
         return await PayloadCache.get<ChartData>({
             source: () => ChartDataFactory
-                .create<T>(chartType, dataSource, {
-                    dataIntervalInMinutes: dataIntervalInMinutes
-                })
+                .create<T>(chartType, dataSource, {dataIntervalInMinutes: dataIntervalInMinutes})
                 .process()
                 .format(),
             abortSaveOn: (r) => r === undefined || r.labels[0] === undefined,

@@ -14,7 +14,7 @@ type AggregateData = {
     }
 };
 
-export class TransactionOverTimeChartData {
+export class TransactionOverTimeChartData implements ChartDataInterace {
     private blockInfo: BlockBasicInfo[];
     private aggregateData: AggregateData = {};
     private options: ChartDataOptions;
@@ -94,7 +94,7 @@ export class TransactionOverTimeChartData {
         }
 
         // Less than a minute
-        if(rawMinuteValue > dataIntervalInMinutes) {
+        if(rawMinuteValue >= dataIntervalInMinutes) {
             if((rawMinuteValue % dataIntervalInMinutes) > 0) {                        
                 minutes = (
                     rawMinuteValue - 
