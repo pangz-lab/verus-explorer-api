@@ -18,6 +18,7 @@ export class CacheKeys {
     static AddressTxListPrefix: CacheData = { key: "address_tx_list:", ttl: 60 * 5 }; //OK
     static AddressBalancePrefix: CacheData = { key: "address_balance:", ttl: 60 * 5 }; //OK
     static SearchQueryPrefix: CacheData = { key: "search:", ttl: 60 * 60 }; //OK
-    static ChartQueryPrefix: CacheData = { key: "chart:", ttl: 60 * 60 * 24 }; //OK
+    static ChartRawDataLongPrefix: CacheData = { key: "chart_raw_data_long:", ttl: 60 * 60 * 24 }; //OK
+    static ChartRawDataShortPrefix: CacheData = { key: "chart_raw_data_short:", ttl: 180 }; //OK
     static ChartDispDataPrefix: CacheData = { key: "chart_disp_data:", ttl: 1 }; //TTL used is defined in the controller
 }

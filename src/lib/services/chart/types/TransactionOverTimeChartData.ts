@@ -1,4 +1,4 @@
-import { ChartData, ChartDataInterace, ChartDataOptions } from "../../../models/ChartDataInterface";
+import { ChartData, ChartDataService, ChartDataInterace, ChartDataOptions } from "../ChartDataInterface";
 import { BlockBasicInfo } from "../../chain/BlockService";
 
 type LabelData = {
@@ -14,12 +14,15 @@ type AggregateData = {
     }
 };
 
-export class TransactionOverTimeChartData implements ChartDataInterace {
+export class TransactionOverTimeChartData 
+    extends ChartDataService
+    implements ChartDataInterace {
     private blockInfo: BlockBasicInfo[];
     private aggregateData: AggregateData = {};
     private options: ChartDataOptions;
 
     constructor(blockInfo: BlockBasicInfo[], options: ChartDataOptions) {
+        super();
         this.blockInfo = blockInfo;
         this.options = options;
     }
@@ -28,10 +31,11 @@ export class TransactionOverTimeChartData implements ChartDataInterace {
         this.aggregateData = {};
         var dateIndex = "";
         const data = this.blockInfo;
+        const defaultOptions = this.getDefaultOptions();
 
         for(var i = 0; i < data.length; i++) {
             const d = new Date(data[i].time * 1000);
-            const id = this.getDateIndex(d, this.options.dataIntervalInMinutes);
+            const id = this.getDateIndex(d, this.getOption<number>(this.options.dataIntervalInMinutes, defaultOptions.dataIntervalInMinutes!));
             dateIndex = id.key;
             if(this.aggregateData[dateIndex] == undefined) {
                 this.aggregateData[dateIndex] = {
@@ -93,7 +97,6 @@ export class TransactionOverTimeChartData implements ChartDataInterace {
             minutes = "00";
         }
 
-        // Less than a minute
         if(rawMinuteValue >= dataIntervalInMinutes) {
             if((rawMinuteValue % dataIntervalInMinutes) > 0) {                        
                 minutes = (

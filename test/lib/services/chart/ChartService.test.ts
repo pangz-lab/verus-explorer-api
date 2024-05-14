@@ -10,20 +10,20 @@ describe('ChartService', () => {
         it('should call BlockService.getHashesByRange with correct arguments', async () => {
             const startTime = 1000;
             const endTime = 2000;
-            await ChartService.getDatasetFromRange(startTime, endTime);
+            await ChartService.getDatasetFromDateRange(startTime, endTime);
             expect(BlockService.getHashesByRange).toHaveBeenCalledWith(startTime, endTime);
         });
 
         it('should return ServicePayload on success', async () => {
             const mockedPayload = { status: 200, data: { result: [] }, error: false };
             (BlockService.getHashesByRange as jest.Mock).mockResolvedValueOnce(Payload.withSuccess(mockedPayload.data));
-            const result = await ChartService.getDatasetFromRange(1000, 2000);
+            const result = await ChartService.getDatasetFromDateRange(1000, 2000);
             expect(result).toMatchObject<any>([]);
         });
 
         it('should return error payload on failure', async () => {
             (BlockService.getHashesByRange as jest.Mock).mockResolvedValueOnce(Payload.withError());
-            const result = await ChartService.getDatasetFromRange(1000, 2000);
+            const result = await ChartService.getDatasetFromDateRange(1000, 2000);
             expect(result).toBe(undefined);
         });
     });

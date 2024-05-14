@@ -7,7 +7,30 @@ export type DateRange = {
 }
 
 export class ChartService {
-    static async getDatasetFromRange(startTime: number, endTime: number): Promise<undefined | BlockBasicInfo[]> {
+    static async getDatasetFromHeight(startHeight: number, count: number): Promise<undefined | BlockBasicInfo[]> {
+        const rangeLabel = startHeight.toString() + '_' + count.toString();
+        try {
+            const lastHeight = startHeight - count;
+            var data: BlockBasicInfo[] = [];
+
+            for(var height = startHeight; height >= lastHeight; height--) {
+                const result = await BlockService.getSummary(height);
+                console.log(result);
+                if(result !== undefined) { data.unshift(result);  }
+
+            }
+
+            return data;
+        } catch(e) {
+            Payload.logError(
+                'getting chart data from range - [Exception] : ' + e,
+                `Range: ${rangeLabel}`,
+                `getDatasetFromHeight`);
+            return undefined;
+        }
+    }
+    
+    static async getDatasetFromDateRange(startTime: number, endTime: number): Promise<undefined | BlockBasicInfo[]> {
         const rangeLabel = startTime.toString() + '_' + endTime.toString();
         try {
             const result = await BlockService.getHashesByRange(startTime, endTime);
@@ -25,7 +48,7 @@ export class ChartService {
             Payload.logError(
                 'getting chart data from range - [Exception] : ' + e,
                 `Range: ${rangeLabel}`,
-                `getDatasetFromRange`);
+                `getDatasetFromDateRange`);
             return undefined;
         }
     }

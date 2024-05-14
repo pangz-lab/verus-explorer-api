@@ -14,6 +14,7 @@ export type BlockBasicInfo = {
     segid: number,
     time: number,
     version: number,
+    validationtype: string,
     txs: string[]
 }
 
@@ -144,6 +145,7 @@ export class BlockService {
                 segid: blockInfo!.segid,
                 time: blockInfo!.time,
                 version: blockInfo!.version,
+                validationtype: blockInfo!.validationtype,
                 txs: blockInfo!.tx,
             }
         } catch (e) {
