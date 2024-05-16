@@ -169,7 +169,9 @@ export class BlockchainService {
         if(blockSummary === undefined) { return undefined; }
         
         var blockTxs: string[] = [];
-        blockSummary.txs.map((e: string) => { if(!blockTxs.includes(e)) { blockTxs.unshift(e); } });
+        blockSummary.txs.map((e: string) => { if(!blockTxs.includes(e)) { blockTxs.push(e); } });
+        //TODO - Improve this, remove reverse
+        blockTxs.reverse();
 
         BlockchainService.lastProcessedHeight = chainHeight;
         const txsInfo = await TransactionService.getBlockTxsInfoSummary(blockTxs);

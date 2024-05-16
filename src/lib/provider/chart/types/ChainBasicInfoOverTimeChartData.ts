@@ -1,52 +1,64 @@
-import { ChartData, ChartDataService, ChartDataInterace, ChartDataOptions } from "../ChartDataInterface";
-import { BlockBasicInfo } from "../../chain/BlockService";
+import { BlockBasicInfoWithTx } from "../../../models/BlockBasicInfo";
+import { ChartData, ChartDataService, ChartDataInterace, ChartDataOptions } from "../../../services/chart/ChartDataInterface";
 
 type LabelData = {
     label: string,
     key: string,
 }
 
-type AggregateData = {
+type ProcessResult = {
     [key: string]: {
         displayText: string,
         blockCount: number,
-        txCount: number
+        txCount: number,
+        difficulty: number,
+        minedValue: number,
     }
 };
 
 export class TransactionOverTimeChartData 
     extends ChartDataService
     implements ChartDataInterace {
-    private blockInfo: BlockBasicInfo[];
-    private aggregateData: AggregateData = {};
+    private blockInfo: BlockBasicInfoWithTx[];
+    private processResult: ProcessResult = {};
     private options: ChartDataOptions;
 
-    constructor(blockInfo: BlockBasicInfo[], options: ChartDataOptions) {
+    constructor(blockInfo: BlockBasicInfoWithTx[], options: ChartDataOptions) {
         super();
         this.blockInfo = blockInfo;
         this.options = options;
     }
 
     process(): ChartDataInterace {
-        this.aggregateData = {};
+        var result: ProcessResult = {};
         var dateIndex = "";
         const data = this.blockInfo;
         const defaultOptions = this.getDefaultOptions();
 
         for(var i = 0; i < data.length; i++) {
             const d = new Date(data[i].time * 1000);
-            const id = this.getDateIndex(d, this.getOption<number>(this.options.dataIntervalInMinutes, defaultOptions.dataIntervalInMinutes!));
+            const id = this.getDateIndex(d,
+                this.getOption<number>(
+                    this.options.dataIntervalInMinutes,
+                    defaultOptions.dataIntervalInMinutes!
+                )
+            );
             dateIndex = id.key;
-            if(this.aggregateData[dateIndex] == undefined) {
-                this.aggregateData[dateIndex] = {
+            if(result[dateIndex] === undefined) {
+                result[dateIndex] = {
                     displayText: id.label,
                     blockCount: 0,
                     txCount: 0,
+                    difficulty: 0,
+                    minedValue: 0,
                 }
             }
-            this.aggregateData[dateIndex].blockCount = this.aggregateData[dateIndex].blockCount + 1;
-            this.aggregateData[dateIndex].txCount = this.aggregateData[dateIndex].txCount + data[i].txs.length;
+            result[dateIndex].blockCount = result[dateIndex].blockCount + 1;
+            result[dateIndex].txCount = result[dateIndex].txCount + data[i].txs.length;
+            result[dateIndex].difficulty = result[dateIndex].difficulty + data[i].difficulty;
+            result[dateIndex].minedValue = result[dateIndex].minedValue + (data[i].minedValue ?? 0);
         }
+        this.processResult = result;
         return this;
     }
 
@@ -54,17 +66,26 @@ export class TransactionOverTimeChartData
         var labels = [];
         var blockCount = [];
         var txCount = [];
-        for (const key in this.aggregateData) {
-            labels.unshift(this.aggregateData[key].displayText);
-            blockCount.unshift(this.aggregateData[key].blockCount);
-            txCount.unshift(this.aggregateData[key].txCount);
+        var difficulty = [];
+        var minedValue = [];
+        var resultIndex = Object.keys(this.processResult).length - 1;
+        
+        for (const key in this.processResult) {
+            labels[resultIndex] = this.processResult[key].displayText;
+            blockCount[resultIndex] = this.processResult[key].blockCount;
+            txCount[resultIndex] = this.processResult[key].txCount;
+            difficulty[resultIndex] = this.processResult[key].difficulty / 1e10;
+            minedValue[resultIndex] = this.processResult[key].minedValue;
+            resultIndex -= 1;
         }
 
         return {
             labels: labels,
             data: [
                 blockCount,
-                txCount
+                txCount,
+                difficulty,
+                minedValue
             ],
         }
     }

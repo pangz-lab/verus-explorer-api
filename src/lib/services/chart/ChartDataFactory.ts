@@ -1,10 +1,10 @@
 import { ChartData, ChartDataInterace, ChartDataOptions } from "./ChartDataInterface";
-import { BlockBasicInfo } from "../chain/BlockService";
-import { ChartDataProvider } from "./ChartDataProvider";
-import { BlockBasicInfoChartData } from "./types/BlockBasicInfoChartData";
-import { TransactionOverTimeChartData } from "./types/TransactionOverTimeChartData";
+import { ChartDataProvider } from "../../provider/chart/ChartDataProvider";
+import { BlockBasicInfoChartData } from "../../provider/chart/types/BlockBasicInfoChartData";
+import { TransactionOverTimeChartData } from "../../provider/chart/types/ChainBasicInfoOverTimeChartData";
 import { CacheKeys } from "../caching/CacheKeys";
 import { PayloadCache } from "../caching/Caching";
+import { BlockBasicInfo } from "../../models/BlockBasicInfo";
 
 type ChartDataServiceClass = {
     [key in ChartType]: { className: new (data: any, options: ChartDataOptions) => ChartDataInterace; };
@@ -27,12 +27,12 @@ type ChartNumberRange = {
 
 type OperationData = BlockBasicInfo[] | undefined;
 
-export type ChartType = "txovertime" | "blkbasicinfo";
+export type ChartType = "chainbasicinfoovertime" | "blkbasicinfo";
 
 export class ChartDataFactory {
 
     static readonly classMap: ChartDataServiceClass = {
-        "txovertime": { className: TransactionOverTimeChartData },
+        "chainbasicinfoovertime": { className: TransactionOverTimeChartData },
         "blkbasicinfo": { className: BlockBasicInfoChartData },
     };
 
@@ -56,6 +56,8 @@ export class ChartDataFactory {
         "last50" : { value: 50, cacheTtl: 60 * 5 },
         "last100" : { value: 100, cacheTtl: 60 * 10 },
         "last500" : { value: 500, cacheTtl: 60 * 10 },
+        "last1000" : { value: 1000, cacheTtl: 60 * 30 },
+        "last1500" : { value: 1500, cacheTtl: 60 * 60 },
     };
 
     static create<T>(chartType: ChartType, data: T, options: ChartDataOptions): ChartDataInterace {
@@ -64,7 +66,7 @@ export class ChartDataFactory {
 
     static async getOperation(type: ChartType, range: string): Promise<{ options: ChartDataOptions; dataSource: OperationData }> {
         switch(type) {
-            case "txovertime": return {
+            case "chainbasicinfoovertime": return {
                 options: { dataIntervalInMinutes: ChartDataFactory.allowedTimeRange[range].xIntervalInMinutes },
                 dataSource: await ChartDataProvider.getBlockBasicInfoByDateRange(ChartDataFactory.allowedTimeRange[range]!.minutes)
             };
@@ -118,7 +120,7 @@ export class ChartDataFactory {
         if(!ChartDataFactory.isRangeAllowed(range)) {
             throw new Error(`Unknown range '${range}'. Cache TTL not found`);
         }
-        //TODO improve this
+        //TODO improve this to avoid calling getRangeSetting 2x
         return ChartDataFactory.getRangeSetting(range)![range].cacheTtl;
     }
 

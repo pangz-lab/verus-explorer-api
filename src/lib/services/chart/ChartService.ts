@@ -1,5 +1,6 @@
+import { BlockBasicInfo } from "../../models/BlockBasicInfo";
 import { Payload } from "../Payload";
-import { BlockBasicInfo, BlockService } from "../chain/BlockService";
+import { BlockService } from "../chain/BlockService";
 
 export type DateRange = {
     start: number,
@@ -15,9 +16,7 @@ export class ChartService {
 
             for(var height = startHeight; height >= lastHeight; height--) {
                 const result = await BlockService.getSummary(height);
-                console.log(result);
-                if(result !== undefined) { data.unshift(result);  }
-
+                if(result !== undefined) { data.push(result);  }
             }
 
             return data;
