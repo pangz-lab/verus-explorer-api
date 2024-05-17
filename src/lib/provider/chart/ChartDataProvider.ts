@@ -1,19 +1,11 @@
 import { CacheKeys } from "../../services/caching/CacheKeys";
 import { PayloadCache } from "../../services/caching/Caching";
 import { BlockchainService } from "../../services/chain/BlockchainService";
-import { TransactionService } from "../../services/chain/TransactionService";
-import { ServicePayload } from "../../services/Payload";
 import { ChartService, DateRange } from "../../services/chart/ChartService";
 import { BlockBasicInfo, BlockBasicInfoWithTx } from "../../models/BlockBasicInfo";
+import { TransactionService, TxBasicInfo } from "../../services/chain/TransactionService";
 
-type TxExtraData = {
-    txFee: number,
-    miningReward: number,
-    isMinedBlockTx: boolean
-};
-
-type TxDetail = {
-    txsDetail: Array<{[key: string]: any }>,
+type TempBasicTxInfo = {
     minedDataTx: string,
     minedValue: number,
     txsFee: number[]
@@ -42,11 +34,11 @@ export class ChartDataProvider {
         if(queryResult !== undefined) {
             var finalResult: BlockBasicInfoWithTx[] = [];
             for(var blockIndex = 0; blockIndex < queryResult.length; blockIndex++) {
-                const txDetail = await ChartDataProvider.getGetTxDetail(queryResult[blockIndex].txs);
+                
+                const txDetail = await ChartDataProvider.getBasicTxInfo(queryResult[blockIndex].txs);
                 finalResult[blockIndex] = queryResult[blockIndex] as BlockBasicInfoWithTx;
                 finalResult[blockIndex].minedDataTx = txDetail.minedDataTx;
                 finalResult[blockIndex].minedValue = txDetail.minedValue;
-                finalResult[blockIndex].txsDetail = txDetail.txsDetail;
                 finalResult[blockIndex].txsFee = txDetail.txsFee;
             }
             result = result.concat(finalResult);
@@ -80,11 +72,10 @@ export class ChartDataProvider {
             if(queryResult !== undefined) {
                 var finalResult: BlockBasicInfoWithTx[] = [];
                 for(var blockIndex = 0; blockIndex < queryResult.length; blockIndex++) {
-                    const txDetail = await ChartDataProvider.getGetTxDetail(queryResult[blockIndex].txs);
+                    const txDetail = await ChartDataProvider.getBasicTxInfo(queryResult[blockIndex].txs);
                     finalResult[blockIndex] = queryResult[blockIndex] as BlockBasicInfoWithTx;
                     finalResult[blockIndex].minedDataTx = txDetail.minedDataTx;
                     finalResult[blockIndex].minedValue = txDetail.minedValue;
-                    finalResult[blockIndex].txsDetail = txDetail.txsDetail;
                     finalResult[blockIndex].txsFee = txDetail.txsFee;
                 }
                 result = result.concat(finalResult);
@@ -94,8 +85,7 @@ export class ChartDataProvider {
         return result;
     }
 
-    private static async getGetTxDetail(blockTxs: string[]): Promise<TxDetail>{
-        var txsDetail: Array<{[key: string]: any }> = [];
+    private static async getBasicTxInfo(blockTxs: string[]): Promise<TempBasicTxInfo>{
         var txsFee: number[] = [];
         var txsFeeIndex: number = 0;
         var minedDataTx: string = "";
@@ -106,27 +96,24 @@ export class ChartDataProvider {
             const cacheKey = CacheKeys.TxInfoPrefix.key + tx;
             const ttl = CacheKeys.TxInfoPrefix.ttl;
 
-            const r = await PayloadCache.get<ServicePayload>({
-                source: async () => TransactionService.getInfo(tx),
+            const r = await PayloadCache.get<TxBasicInfo>({
+                source: async () => TransactionService.getBasicInfo(tx),
                 abortSaveOn: (r) => r === undefined,
                 key: cacheKey,
                 ttl: ttl
             });
 
-            if(!r?.error && r?.data !== undefined) {
-                txsDetail[txIndex] = r.data;
-                const txExtraData = ChartDataProvider.getTxExtraData(r.data as {[key: string]: any });
-                if(txExtraData.isMinedBlockTx) {
+            if(r !== undefined) {
+                if(r.isMinedBlockTx) {
                     minedDataTx = tx;
-                    minedValue = txExtraData.miningReward;
+                    minedValue = r.miningReward;
                 }
-                txsFee[txsFeeIndex] = txExtraData.txFee;
+                txsFee[txsFeeIndex] = r.txFee;
                 txsFeeIndex += 1;
             }
         }
 
         return {
-            txsDetail: txsDetail,
             minedDataTx: minedDataTx,
             minedValue: minedValue,
             txsFee: txsFee,
@@ -144,53 +131,5 @@ export class ChartDataProvider {
             lowDate,
             ChartDataProvider.stepsInMinutes
         );
-    }
-
-    private static getTxExtraData(txDetail: any): TxExtraData {
-        var txData = txDetail as {[key: string]: any };
-        var txVinTotalValue: number = 0;
-        var txVoutTotalValue: number = 0;
-        var txVinFirstItem: number = txData?.vin[0];
-        var txVoutFirstItem: number = txData?.vout[0];
-        var txValueBalance: number = txData?.valueBalance;
-        var miningReward = 0;
-        var txFee = 0;
-        const isMinedBlockTx = txDetail?.vin[0] != undefined
-            && txDetail?.vin[0]["coinbase"] !== undefined
-            && txDetail?.vout[0]["value"] !== undefined;
-            miningReward = 0;
-
-        var index = 0;
-        while(txDetail?.vin[index] !== undefined) {
-            txVinTotalValue += txDetail?.vin[index]["value"];
-            index += 1;
-        }
-
-        index = 0;
-        while(txDetail?.vout[index] !== undefined) {
-            txVoutTotalValue += txDetail?.vout[index]["value"];
-            index += 1;
-        }
-
-        if(isMinedBlockTx) {
-            miningReward += txVoutTotalValue;
-        } else {
-            txFee = parseFloat((txVinTotalValue - txVoutTotalValue).toFixed(8));
-            if (txValueBalance != undefined) {
-                if (txVoutFirstItem == undefined) {
-                    txFee = parseFloat((txValueBalance + txVinTotalValue).toFixed(8));
-                } else if (txVinFirstItem == undefined) {
-                    txFee = parseFloat((txValueBalance - txVoutTotalValue).toFixed(8));
-                } else {
-                    txFee = parseFloat(((txVinTotalValue - txVoutTotalValue) + txValueBalance).toFixed(8));
-                }
-            }
-        }
-
-        return {
-            txFee: txFee,
-            miningReward: miningReward,
-            isMinedBlockTx: isMinedBlockTx
-        };
     }
 }

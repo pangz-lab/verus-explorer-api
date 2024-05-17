@@ -1,5 +1,5 @@
 import { BlockBasicInfoWithTx } from "../../../models/BlockBasicInfo";
-import { ChartData, ChartDataService, ChartDataInterace, ChartDataOptions } from "../../../services/chart/ChartDataInterface";
+import { ChartData, ChartDataService, ChartDataInterace, ChartDataOptions } from "../ChartDataInterface";
 
 export class BlockBasicInfoChartData 
     extends ChartDataService
@@ -21,6 +21,7 @@ export class BlockBasicInfoChartData
         var txCount = [];
         var blockType = [];
         var minedValue = [];
+        var blockTime = [];
 
         for(var i = 0; i < this.blockInfo.length; i++) {
             const data = this.blockInfo[i];
@@ -30,8 +31,10 @@ export class BlockBasicInfoChartData
             diff.push(parseFloat((data.difficulty / 1e10).toFixed(4)));
             totalTxFee.push(this.getBlockTxFeeTotal(data.txsFee));
             txCount.push(data.txs.length);
-            blockType.push(data.blocktype == 'mined'? 1 : 0);
+            blockType.push(data.blocktype == 'mined'? 1 : -1);
             minedValue.push(data.minedValue);
+            const lastBlock = this.blockInfo[i + 1];
+            blockTime.push((lastBlock === undefined)? 0 : data.time - lastBlock.time);
         }
 
         return {
@@ -43,6 +46,7 @@ export class BlockBasicInfoChartData
                 txCount,
                 blockType,
                 minedValue,
+                blockTime,
             ],
         }
     }

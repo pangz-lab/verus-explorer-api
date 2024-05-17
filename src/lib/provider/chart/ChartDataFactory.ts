@@ -1,10 +1,10 @@
 import { ChartData, ChartDataInterace, ChartDataOptions } from "./ChartDataInterface";
-import { ChartDataProvider } from "../../provider/chart/ChartDataProvider";
-import { BlockBasicInfoChartData } from "../../provider/chart/types/BlockBasicInfoChartData";
-import { TransactionOverTimeChartData } from "../../provider/chart/types/ChainBasicInfoOverTimeChartData";
-import { CacheKeys } from "../caching/CacheKeys";
-import { PayloadCache } from "../caching/Caching";
-import { BlockBasicInfo } from "../../models/BlockBasicInfo";
+import { ChartDataProvider } from "./ChartDataProvider";
+import { BlockBasicInfoChartData } from "./types/BlockBasicInfoChartData";
+import { TransactionOverTimeChartData } from "./types/ChainBasicInfoOverTimeChartData";
+import { CacheKeys } from "../../services/caching/CacheKeys";
+import { Caching, PayloadCache } from "../../services/caching/Caching";
+import { BlockBasicInfo, BlockBasicInfoWithTx } from "../../models/BlockBasicInfo";
 
 type ChartDataServiceClass = {
     [key in ChartType]: { className: new (data: any, options: ChartDataOptions) => ChartDataInterace; };
@@ -25,8 +25,12 @@ type ChartNumberRange = {
     }
 };
 
-type OperationData = BlockBasicInfo[] | undefined;
-
+type OperationData = BlockBasicInfoWithTx[] | undefined;
+export enum ChartDataGenStatus {
+    active,
+    inactive
+}
+export type ChartOperationData = { options: ChartDataOptions; dataSource: OperationData };
 export type ChartType = "chainbasicinfoovertime" | "blkbasicinfo";
 
 export class ChartDataFactory {
@@ -46,9 +50,9 @@ export class ChartDataFactory {
         "last24Hours" : { minutes: 60 * 24, cacheTtl: 60 * 15, xIntervalInMinutes: 30 },
         "last3Days" : { minutes: 60 * 24 * 3, cacheTtl: 60 * 15, xIntervalInMinutes: 60 * 3 },
         "last7Days" : { minutes: 60 * 24 * 7, cacheTtl: 60 * 30, xIntervalInMinutes: 60 * 3 },
-        "last15Days" : { minutes: 60 * 24 * 15, cacheTtl: 60 * 60, xIntervalInMinutes: 60 * 6 },
-        "last30Days" : { minutes: 60 * 24 * 30, cacheTtl: 60 * 60 * 12, xIntervalInMinutes: 60 * 24 * 15 },
-        "last90Days" : { minutes: 60 * 24 * 30 * 3, cacheTtl: 60 * 60 * 12, xIntervalInMinutes: 60 * 24 * 30 },
+        "last15Days" : { minutes: 60 * 24 * 15, cacheTtl: 60 * 60 * 6, xIntervalInMinutes: 60 * 30 },
+        "last30Days" : { minutes: 60 * 24 * 30, cacheTtl: 60 * 60 * 12, xIntervalInMinutes: 60 * 30 },
+        "last90Days" : { minutes: 60 * 24 * 30 * 3, cacheTtl: 60 * 60 * 12, xIntervalInMinutes: 60 * 30 },
     };
     
     static readonly allowedNumberRange: ChartNumberRange = {
@@ -64,7 +68,7 @@ export class ChartDataFactory {
         return new ChartDataFactory.classMap[chartType].className(data, options);
     }
 
-    static async getOperation(type: ChartType, range: string): Promise<{ options: ChartDataOptions; dataSource: OperationData }> {
+    static async getOperation(type: ChartType, range: string): Promise<ChartOperationData> {
         switch(type) {
             case "chainbasicinfoovertime": return {
                 options: { dataIntervalInMinutes: ChartDataFactory.allowedTimeRange[range].xIntervalInMinutes },
@@ -85,7 +89,7 @@ export class ChartDataFactory {
         range: string,
         dataSource: T,
         options: ChartDataOptions): Promise<undefined | ChartData> {
-        const cacheKey = CacheKeys.ChartDispDataPrefix.key + ':' + type + '_' + range;
+        const cacheKey = CacheKeys.ChartDispDataPrefix.key + type + '_' + range;
         const ttl = ChartDataFactory.getCacheTtl(range);
 
         return await PayloadCache.get<ChartData>({
@@ -102,6 +106,29 @@ export class ChartDataFactory {
     static isConfigValid(type: ChartType, range: string): boolean {
         return ChartDataFactory.isTypeAllowed(type) 
             && ChartDataFactory.isRangeAllowed(range);
+    }
+
+    // This might become unweildy when used extensively.
+    // This is use to simply lock the chart data generation for N
+    // minutes to avoid regenerating the same chart data when the same request is received.
+    // We can totally avoid using this in a normal high end server however this helps improve the perfomance when used.
+    // properly.
+    //
+    // Note that chart data are cached by default however once the data has expired, it has to be regenerated.
+    // This is the point this flag will kick in to enable single operation for the same data set to run.
+    // User might experience network error under the hood for a short time while generating
+    // but a simple refresh would help mitigate this.
+    static setDataGenExecFlag(type: ChartType, range: string, status: ChartDataGenStatus): void {
+        const cacheKey = CacheKeys.ChartDataGenExecFlagPrefix.key + type + ':' + range;
+        const ttl = CacheKeys.ChartDataGenExecFlagPrefix.ttl;
+        Caching.set(cacheKey, status === ChartDataGenStatus.active? 1 : 0, ttl);
+    }
+    
+    static async getDataGenExecFlag(type: ChartType, range: string): Promise<ChartDataGenStatus> {
+        const cacheKey = CacheKeys.ChartDataGenExecFlagPrefix.key + type + ':' + range;
+        const ttl = CacheKeys.ChartDataGenExecFlagPrefix.ttl;
+        const v = await Caching.get(cacheKey);
+        return v === 1? ChartDataGenStatus.active: ChartDataGenStatus.inactive;
     }
 
     private static getRangeSetting(range: string): ChartTimeRange | ChartNumberRange | undefined  {

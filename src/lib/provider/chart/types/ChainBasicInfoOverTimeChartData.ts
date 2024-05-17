@@ -1,5 +1,5 @@
 import { BlockBasicInfoWithTx } from "../../../models/BlockBasicInfo";
-import { ChartData, ChartDataService, ChartDataInterace, ChartDataOptions } from "../../../services/chart/ChartDataInterface";
+import { ChartData, ChartDataService, ChartDataInterace, ChartDataOptions } from "../ChartDataInterface";
 
 type LabelData = {
     label: string,

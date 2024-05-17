@@ -6,6 +6,7 @@ import { IdentityController } from "../controllers/IdentityController";
 import { BlockchainController } from "../controllers/BlockchainController";
 import { TransactionController } from "../controllers/TransactionController";
 import { ChartController } from '../controllers/ChartController';
+import { StatsController } from '../controllers/StatsController';
 
 export class Routes {
     static generate(app: Express): void {
@@ -22,5 +23,6 @@ export class Routes {
         app.get('/api/address/:address/balance', AddressController.balance);
         app.get('/api/search/', SearchController.query);
         app.get('/api/chart/:type/', ChartController.query);
+        app.get('/api/stats/mining/', StatsController.pool);
     }
 }
