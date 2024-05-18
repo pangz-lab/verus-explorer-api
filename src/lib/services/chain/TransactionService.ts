@@ -12,6 +12,7 @@ export type BlockTxInfoSummary = {
 
 export type TxBasicInfo = {
     txFee: number,
+    totalVout: number,
     miningReward: number,
     isMinedBlockTx: boolean
 };
@@ -114,17 +115,10 @@ export class TransactionService {
         if(txInfo.error) { return undefined; }
         const d = txInfo.data;
 
-        // txsInfo.push({
-        //     txid: d.txid,
-        //     vout: d.vout,
-        //     time: d.time,
-        //     height: d.height,
-        //     blockhash: d.blockhash,
-        // });
-
         const extra = TransactionService.getTxExtraData(txInfo.data);
         return {
             txFee: extra.txFee,
+            totalVout: extra.totalVout,
             miningReward: extra.miningReward,
             isMinedBlockTx: extra.isMinedBlockTx,
         }
@@ -175,7 +169,8 @@ export class TransactionService {
         return {
             txFee: txFee,
             miningReward: miningReward,
-            isMinedBlockTx: isMinedBlockTx
+            isMinedBlockTx: isMinedBlockTx,
+            totalVout: txVoutTotalValue,
         };
     }
 }

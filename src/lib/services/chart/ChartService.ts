@@ -7,7 +7,21 @@ export type DateRange = {
     end: number,
 }
 
+export type ConversionUnit = {
+    value: number,
+    unit: string,
+}
+
 export class ChartService {
+    private static conversionUnit = new Map<string, ConversionUnit>([
+        ['1e18', { value: 1e18, unit: '1E' }],
+        ['1e15', { value: 1e15, unit: '1P' }],
+        ['1e12', { value: 1e12, unit: '1T' }],
+        ['1e9', { value: 1e9, unit: '1B' }],
+        ['1e6', { value: 1e6, unit: '1M' }],
+        ['1e3', { value: 1e3, unit: '1k' }],
+        ['1', { value: 1, unit: '' }],
+    ]);
     static async getDatasetFromHeight(startHeight: number, count: number): Promise<undefined | BlockBasicInfo[]> {
         const rangeLabel = startHeight.toString() + '_' + count.toString();
         try {
@@ -74,6 +88,23 @@ export class ChartService {
             }
             runningEndDate = structuredClone(runningStartDate);
         }
+    }
+
+    static getSum(data: number[]): number {
+        var result = 0;
+        for(var i = 0; i < data.length; i++) {
+          result += data[i];
+        }
+        return parseFloat(result.toFixed(4));
+    }
+
+    static getConversionUnit(maxValue: number): undefined | ConversionUnit {
+        for( var [k, cu] of ChartService.conversionUnit.entries()) {
+            if(maxValue > cu.value) {
+                return cu;
+            }
+        }
+        return ChartService.conversionUnit.get('1');
     }
 
     private static setDateMinutes(lowDate: Date, stepsInMinutes: number) {

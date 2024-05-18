@@ -17,7 +17,9 @@ export type BlockBasicInfo = {
 
 export interface BlockBasicInfoWithTx extends BlockBasicInfo {
     txsDetail: Array<Object>
-    minedDataTx: string,
-    minedValue: number,
-    txsFee: number[],
+    blockMiningDataTx: string,
+    blockMiningReward: number,
+    blockTotalVoutPerTx: number[],
+    blockFeesPerTx: number[],
+    blockHighestVout: number,
 }

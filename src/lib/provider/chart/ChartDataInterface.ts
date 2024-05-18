@@ -21,5 +21,5 @@ export class ChartDataService {
 
 export type ChartData = {
     labels: string[],
-    data: Array<number[] | string[] | number[][]>,
+    data: {[key: string]: Object},
 };

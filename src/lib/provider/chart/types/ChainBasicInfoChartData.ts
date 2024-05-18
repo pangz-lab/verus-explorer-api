@@ -1,4 +1,5 @@
 import { BlockBasicInfoWithTx } from "../../../models/BlockBasicInfo";
+import { ChartService } from "../../../services/chart/ChartService";
 import { ChartData, ChartDataService, ChartDataInterace, ChartDataOptions } from "../ChartDataInterface";
 
 type LabelData = {
@@ -12,16 +13,18 @@ type ProcessResult = {
         blockCount: number,
         txCount: number,
         difficulty: number,
-        minedValue: number,
+        blockMiningReward: number,
+        totalBlockVoutValue: number,
     }
 };
 
-export class TransactionOverTimeChartData 
+export class ChainBasicInfoChartData 
     extends ChartDataService
     implements ChartDataInterace {
     private blockInfo: BlockBasicInfoWithTx[];
     private processResult: ProcessResult = {};
     private options: ChartDataOptions;
+    private maxVoutValue = 0;
 
     constructor(blockInfo: BlockBasicInfoWithTx[], options: ChartDataOptions) {
         super();
@@ -50,13 +53,18 @@ export class TransactionOverTimeChartData
                     blockCount: 0,
                     txCount: 0,
                     difficulty: 0,
-                    minedValue: 0,
+                    blockMiningReward: 0,
+                    totalBlockVoutValue: 0,
                 }
             }
             result[dateIndex].blockCount = result[dateIndex].blockCount + 1;
             result[dateIndex].txCount = result[dateIndex].txCount + data[i].txs.length;
             result[dateIndex].difficulty = result[dateIndex].difficulty + data[i].difficulty;
-            result[dateIndex].minedValue = result[dateIndex].minedValue + (data[i].minedValue ?? 0);
+            result[dateIndex].blockMiningReward = result[dateIndex].blockMiningReward + data[i].blockMiningReward;
+            result[dateIndex].totalBlockVoutValue = result[dateIndex].totalBlockVoutValue + ChartService.getSum(data[i].blockTotalVoutPerTx);
+            if(result[dateIndex].totalBlockVoutValue > this.maxVoutValue) {
+                this.maxVoutValue = result[dateIndex].totalBlockVoutValue;
+            }
         }
         this.processResult = result;
         return this;
@@ -67,32 +75,38 @@ export class TransactionOverTimeChartData
         var blockCount = [];
         var txCount = [];
         var difficulty = [];
-        var minedValue = [];
+        var miningReward = [];
+        var totalBlockVoutValue = [];
         var resultIndex = Object.keys(this.processResult).length - 1;
+
+        const voutConversionUnit = ChartService.getConversionUnit(this.maxVoutValue);
         
         for (const key in this.processResult) {
             labels[resultIndex] = this.processResult[key].displayText;
             blockCount[resultIndex] = this.processResult[key].blockCount;
             txCount[resultIndex] = this.processResult[key].txCount;
-            difficulty[resultIndex] = this.processResult[key].difficulty / 1e10;
-            minedValue[resultIndex] = this.processResult[key].minedValue;
+            difficulty[resultIndex] = parseFloat((this.processResult[key].difficulty / 1e12).toFixed(4));
+            miningReward[resultIndex] = parseFloat(this.processResult[key].blockMiningReward.toFixed(4));
+            totalBlockVoutValue[resultIndex] = parseFloat((this.processResult[key].totalBlockVoutValue/ (voutConversionUnit?.value ?? 1)).toFixed(4));
             resultIndex -= 1;
         }
 
         return {
             labels: labels,
-            data: [
-                blockCount,
-                txCount,
-                difficulty,
-                minedValue
-            ],
+            data: {
+                'blockCount': { data: blockCount, options: {}},
+                'txCount': { data: txCount, options: {}},
+                'difficulty': { data: difficulty, options: {}},
+                'miningReward': { data: miningReward, options: {}},
+                'totalBlockVoutValue': { data: totalBlockVoutValue, options: { conv: voutConversionUnit}}
+            },
         }
     }
 
     private getDateIndex(date: Date, dataIntervalInMinutes: number): LabelData {
         var minutes = "00";
         const rawMinuteValue = date.getMinutes();
+        const year = date.getFullYear().toString();
         const month = (date.getMonth() + 1).toString().padStart(2, '0');
         const day = date.getDate().toString().padStart(2, '0');
         const hour = date.getHours().toString().padStart(2, '0');
@@ -100,16 +114,16 @@ export class TransactionOverTimeChartData
         // More than a day
         if(dataIntervalInMinutes >= 60 * 6) {
             return {
-                label: month + '/' + day,
-                key: month + '-' + day,
+                label: year + '/' + month + '/' + day,
+                key: year + '-' + month + '-' + day,
             };
         }
         
         // More than an hour
         if(dataIntervalInMinutes >= 60) {
             return {
-                label: month + '/' + day + ' ' + hour + ':00',
-                key: month + '-' + day + '_' + hour + ':00',
+                label: year + '/' + month + '/' + day + ' ' + hour + ':00',
+                key: year + '-' + month + '-' + day + '_' + hour + ':00',
             };
         }
         
@@ -129,8 +143,8 @@ export class TransactionOverTimeChartData
             }
         }
         return {
-            label: month + '/' + day + ' ' + hour + ':' + minutes,
-            key: month + '-' + day + '_' + hour + ':' + minutes,
+            label: year + '/' + month + '/' + day + ' ' + hour + ':' + minutes,
+            key: year + '-' + month + '-' + day + '_' + hour + ':' + minutes,
         };
     }
 }

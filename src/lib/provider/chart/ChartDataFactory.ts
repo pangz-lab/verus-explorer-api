@@ -1,10 +1,12 @@
 import { ChartData, ChartDataInterace, ChartDataOptions } from "./ChartDataInterface";
 import { ChartDataProvider } from "./ChartDataProvider";
 import { BlockBasicInfoChartData } from "./types/BlockBasicInfoChartData";
-import { TransactionOverTimeChartData } from "./types/ChainBasicInfoOverTimeChartData";
+import { ChainBasicInfoChartData } from "./types/ChainBasicInfoChartData";
 import { CacheKeys } from "../../services/caching/CacheKeys";
 import { Caching, PayloadCache } from "../../services/caching/Caching";
-import { BlockBasicInfo, BlockBasicInfoWithTx } from "../../models/BlockBasicInfo";
+import { BlockBasicInfoWithTx } from "../../models/BlockBasicInfo";
+import { MiningStatsBasicInfo } from "../../models/MiningStats";
+import { MiningStatsBasicInfoChartData } from "./types/MiningStatsBasicInfoChartData";
 
 type ChartDataServiceClass = {
     [key in ChartType]: { className: new (data: any, options: ChartDataOptions) => ChartDataInterace; };
@@ -25,24 +27,25 @@ type ChartNumberRange = {
     }
 };
 
-type OperationData = BlockBasicInfoWithTx[] | undefined;
+type OperationData = MiningStatsBasicInfo[] | BlockBasicInfoWithTx[] | undefined;
 export enum ChartDataGenStatus {
     active,
     inactive
 }
 export type ChartOperationData = { options: ChartDataOptions; dataSource: OperationData };
-export type ChartType = "chainbasicinfoovertime" | "blkbasicinfo";
+export type ChartType = "miningbasicinfo" | "chainbasicinfo" | "blkbasicinfo";
 
 export class ChartDataFactory {
 
     static readonly classMap: ChartDataServiceClass = {
-        "chainbasicinfoovertime": { className: TransactionOverTimeChartData },
+        "miningbasicinfo": { className: MiningStatsBasicInfoChartData },
+        "chainbasicinfo": { className: ChainBasicInfoChartData },
         "blkbasicinfo": { className: BlockBasicInfoChartData },
     };
 
     static readonly allowedTimeRange: ChartTimeRange = {
-        "last10Minutes" : { minutes: 10, cacheTtl: 60 * 5, xIntervalInMinutes: 5 },
-        "last30Minutes" : { minutes: 30, cacheTtl: 60 * 5, xIntervalInMinutes: 5 },
+        "last10Minutes" : { minutes: 10, cacheTtl: 60 * 5, xIntervalInMinutes: 10 },
+        "last30Minutes" : { minutes: 30, cacheTtl: 60 * 5, xIntervalInMinutes: 10 },
         "lastHour" : { minutes: 60, cacheTtl: 60 * 10, xIntervalInMinutes: 10 },
         "last3Hours" : { minutes: 60 * 3, cacheTtl: 60 * 15, xIntervalInMinutes: 10 },
         "last6Hours" : { minutes: 60 * 6, cacheTtl: 60 * 15, xIntervalInMinutes: 10 },
@@ -59,8 +62,10 @@ export class ChartDataFactory {
         "last10" : { value: 10, cacheTtl: 60 * 5 },
         "last50" : { value: 50, cacheTtl: 60 * 5 },
         "last100" : { value: 100, cacheTtl: 60 * 10 },
+        "last250" : { value: 250, cacheTtl: 60 * 10 },
         "last500" : { value: 500, cacheTtl: 60 * 10 },
         "last1000" : { value: 1000, cacheTtl: 60 * 30 },
+        "last1250" : { value: 1250, cacheTtl: 60 * 60 },
         "last1500" : { value: 1500, cacheTtl: 60 * 60 },
     };
 
@@ -70,7 +75,11 @@ export class ChartDataFactory {
 
     static async getOperation(type: ChartType, range: string): Promise<ChartOperationData> {
         switch(type) {
-            case "chainbasicinfoovertime": return {
+            case "miningbasicinfo": return {
+                options: { },
+                dataSource: await ChartDataProvider.getMiningStatsData()
+            };
+            case "chainbasicinfo": return {
                 options: { dataIntervalInMinutes: ChartDataFactory.allowedTimeRange[range].xIntervalInMinutes },
                 dataSource: await ChartDataProvider.getBlockBasicInfoByDateRange(ChartDataFactory.allowedTimeRange[range]!.minutes)
             };
