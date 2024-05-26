@@ -1,9 +1,10 @@
 import { Request, Response } from 'express';
 import { CacheKeys } from '../../../services/caching/CacheKeys';
 import { PayloadCache } from '../../../services/caching/Caching';
-import { Payload, ServicePayload } from '../../../services/Payload';
+import { LatestChainStatePayload, Payload, ServicePayload } from '../../../services/Payload';
 import { BlockchainService } from "../../../services/chain/BlockchainService";
 import { Logger } from '../../../services/Logger';
+import { BlockchainDataProvider } from '../../../provider/chain/BlockchainDataProvider';
 
 export class BlockchainController {
     static async info(req: Request, res: Response) {
@@ -49,21 +50,23 @@ export class BlockchainController {
 
     static async status(req: Request, res: Response) {
         try {
-            const cacheKey = CacheKeys.BlockchainStatus.key;
-            const ttl = CacheKeys.BlockchainStatus.ttl;
 
-            const resBody: ServicePayload = await PayloadCache.get<ServicePayload>({
-                source: async () => {
-                    const data = await BlockchainService.getCurrentState()
-                    return (data === undefined)?
-                        Payload.withError():
-                        Payload.withSuccess(data);
-                },
-                abortSaveOn: (r) => r === undefined || (r != undefined && r.error),
-                key: cacheKey,
-                ttl: ttl
-            });
+            // const resBody: ServicePayload = await PayloadCache.get<ServicePayload>({
+            //     source: async () => {
+            //         const data = await BlockchainDataProvider.getCurrentState()
+            //         return (data === undefined)?
+            //             Payload.withError():
+            //             Payload.withSuccess(data);
+            //     },
+            //     abortSaveOn: (r) => r === undefined || (r != undefined && r.error),
+            //     key: cacheKey,
+            //     ttl: ttl
+            // });
 
+            const state: LatestChainStatePayload = await BlockchainDataProvider.getCurrentState();
+            const resBody = (state === undefined)?
+                Payload.withError():
+                Payload.withSuccess(state);
             if(resBody === undefined) { return res.status(404).send("Failed to retrieve the data!"); }
             res.send(resBody);
         } catch(e) {

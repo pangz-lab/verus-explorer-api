@@ -25,7 +25,7 @@ export class Routes {
         app.get('/api/address/:address/balance', AddressController.balance);
         app.get('/api/search/', SearchController.query);
         app.get('/api/chart/:type/', ChartController.query);
-        // app.get('/api/a/stats/mining/', MiningPoolStatsController.pool);
+        app.get('/api/a/stats/mining/pool', MiningPoolStatsController.pool);
         app.get('/api/a/coinpaprika/coin/market', CoinPaprikaController.getCoinMarketData);
     }
 

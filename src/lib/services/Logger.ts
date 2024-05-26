@@ -21,7 +21,7 @@ export class Logger {
 
     static toErrorLog(content: string): LogWriter {
         try {
-            return new LogWriter(content, Logger.getErrorLog());
+            return new LogWriter('📛 ' + content, Logger.getErrorLog());
         } catch (e) {
             throw new Error("Failed to log error.\n[Error]" + e)
         }
@@ -42,7 +42,7 @@ class LogWriter {
 
     constructor(data: string, filePath?: string) {
         this.filePath = filePath;
-        this.data = (new Date()).toString() + ':  ' + data + '\n';
+        this.data = (new Date()).toLocaleString() + ':  ' + data + '\n';
     }
 
     write(): void {

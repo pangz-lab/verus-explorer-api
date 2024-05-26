@@ -10,4 +10,5 @@ UI
 
 API
 - add apikey
-- fix wss blob error, reduce status
+- fix wss blob error, reduce status - done
+- fix slow get status request - done

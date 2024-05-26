@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { AppConfig } from '../../../AppConfig';
 import { ServicePayload, Payload } from '../Payload';
+import { HttpService } from '../HttpService';
 
 export class CoinPaprikaService {
     private static baseUrl = AppConfig.get().aggregator.coinPaprika.baseUrl;
@@ -24,7 +25,8 @@ export class CoinPaprikaService {
 
     private static async request(url: string, methodName: string): Promise<ServicePayload> {
         try {
-            const response: any = await axios.get(url, { headers: CoinPaprikaService.headers });
+            // const response: any = await axios.get(url, { headers: CoinPaprikaService.headers });
+            const response: any = await HttpService.sendGetRequest(url, { headers: CoinPaprikaService.headers })
 
             if (response.status != 200 || response.data[0] === undefined) {
                 Payload.logError(

@@ -30,7 +30,7 @@ export class Payload {
 
     static logError(data: string, value: string, method: string): void {
         Logger.toErrorLog(
-            `\n${(new Date()).toISOString()} :` +
+            `\n\n${(new Date()).toLocaleString()} :` +
             `\nFailed to ${data}` +
             `\n${value}` +
             `\nMethod: ${method}` +

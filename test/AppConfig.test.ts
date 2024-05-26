@@ -7,6 +7,9 @@ describe('AppConfig', () => {
         originalEnv = { ...process.env };
         process.env.CHAIN_SOURCE = 'test_chain';
         process.env.LOCAL_SERVER_PORT = '8080';
+        process.env.BIND_UI = 'true';
+        process.env.UI_BASE_DIR = '/base/dir';
+        process.env.UI_ROUTES = '/a,/b';
         process.env.NODE_WALLET_ID = 'test_wallet';
         process.env.NODE_ADDRESS = 'test_address';
         process.env.NODE_AUTH_USER = 'test_user';
@@ -21,6 +24,8 @@ describe('AppConfig', () => {
         process.env.ENABLE_LOGGING = 'true';
         process.env.ERROR_LOG = 'error.log';
         process.env.DEBUG_LOG = 'debug.log';
+        process.env.MARKET_COINPAPRIKA_BASE_URL = 'https://api.coinpaprika.com/v1';
+        process.env.MARKET_COINPAPRIKA_BASE_URL = 'vrsc-verus-coin';
     });
 
     afterAll(() => {
@@ -54,6 +59,17 @@ describe('AppConfig', () => {
                 enabled: true,
                 errorLog: 'error.log',
                 debugLog: 'debug.log'
+            },
+            ui: {
+                bind: true,
+                baseDir: '/base/dir',
+                routes: ['/a', '/b']
+            },
+            aggregator: {
+                coinPaprika: {
+                    baseUrl: 'https://api.coinpaprika.com/v1',
+                    coin: 'vrsc-verus-coin'
+                }
             }
         };
         AppConfig.set(expectedConfig);

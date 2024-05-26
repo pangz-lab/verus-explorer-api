@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { Payload, ServicePayload } from '../Payload';
+import { HttpService } from '../HttpService';
 
 export class MiningPoolStatsService {
     private static urlTime = 'https://miningpoolstats.stream/data/time';
@@ -39,7 +40,8 @@ export class MiningPoolStatsService {
         try {
             const timeResponse = await MiningPoolStatsService.getTime();
             const time = timeResponse.data;
-            const response: any = await axios.get(url + `?t=${time}`, { headers: MiningPoolStatsService.headers });
+            // const response: any = await axios.get(url + `?t=${time}`, );
+            const response: any = await HttpService.sendGetRequest(url + `?t=${time}`, { headers: MiningPoolStatsService.headers })
 
             if (response.status != 200 || response.data === undefined) {
                 Payload.logError(

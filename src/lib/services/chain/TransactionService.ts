@@ -77,15 +77,15 @@ export class TransactionService {
 
     static async getBlockTxsInfoSummary(blockTxs: string[]): Promise<BlockTxInfoSummary[]> {
         var txsInfo = [];
-        var retryCounter = 0;
+        // var retryCounter = 0;
         for(var index = 0; index < blockTxs.length; index++) {
-            var txInfo: any = await TransactionService.getInfo((blockTxs.at(index) as string));
-            retryCounter = 0;
+            const txInfo: any = await TransactionService.getInfo((blockTxs.at(index) as string));
+            // retryCounter = 0;
 
-            while(txInfo.error && retryCounter < 3) {
-                txInfo = await TransactionService.getInfo((blockTxs.at(index) as string));
-                retryCounter += 1;
-            }
+            // while(txInfo.error && retryCounter < 3) {
+            //     txInfo = await TransactionService.getInfo((blockTxs.at(index) as string));
+            //     retryCounter += 1;
+            // }
             
             if(txInfo.error) { continue; }
             const d = txInfo.data;
@@ -102,15 +102,15 @@ export class TransactionService {
     }
     
     static async getBasicInfo(tx: string): Promise<undefined | TxBasicInfo> {
-        var retryCounter = 0;
+        // var retryCounter = 0;
         
-        var txInfo: any = await TransactionService.getInfo(tx);
-        retryCounter = 0;
+        const txInfo: any = await TransactionService.getInfo(tx);
+        // retryCounter = 0;
 
-        while(txInfo.error && retryCounter < 3) {
-            txInfo = await TransactionService.getInfo(tx);
-            retryCounter += 1;
-        }
+        // while(txInfo.error && retryCounter < 3) {
+        //     txInfo = await TransactionService.getInfo(tx);
+        //     retryCounter += 1;
+        // }
         
         if(txInfo.error) { return undefined; }
         const d = txInfo.data;
