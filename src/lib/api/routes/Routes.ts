@@ -1,13 +1,14 @@
 import express, { Express } from 'express';
-import { BlockController } from "../controllers/BlockController";
-import { SearchController } from '../controllers/SearchController';
-import { AddressController } from "../controllers/AddressController";
-import { IdentityController } from "../controllers/IdentityController";
-import { BlockchainController } from "../controllers/BlockchainController";
-import { TransactionController } from "../controllers/TransactionController";
-import { ChartController } from '../controllers/ChartController';
-import { StatsController } from '../controllers/StatsController';
 import path from 'path';
+import { BlockController } from "../controllers/chain/BlockController";
+import { SearchController } from '../controllers/chain/SearchController';
+import { AddressController } from "../controllers/chain/AddressController";
+import { IdentityController } from "../controllers/chain/IdentityController";
+import { BlockchainController } from "../controllers/chain/BlockchainController";
+import { TransactionController } from "../controllers/chain/TransactionController";
+import { ChartController } from '../controllers/chain/ChartController';
+import { MiningPoolStatsController } from '../controllers/aggregator/MiningPoolStatsController';
+import { CoinPaprikaController } from '../controllers/aggregator/CoinPaprikaController';
 
 export class Routes {
     static generate(app: Express): void {
@@ -24,7 +25,8 @@ export class Routes {
         app.get('/api/address/:address/balance', AddressController.balance);
         app.get('/api/search/', SearchController.query);
         app.get('/api/chart/:type/', ChartController.query);
-        app.get('/api/stats/mining/', StatsController.pool);
+        // app.get('/api/a/stats/mining/', MiningPoolStatsController.pool);
+        app.get('/api/a/coinpaprika/coin/market', CoinPaprikaController.getCoinMarketData);
     }
 
     static generateUI(app: Express, baseDir: string, routes: string[]) {

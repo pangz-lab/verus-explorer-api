@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
-import { Payload } from '../../services/Payload';
-import { Logger } from '../../services/Logger';
-import { ChartDataFactory, ChartDataGenStatus, ChartType } from '../../provider/chart/ChartDataFactory';
+import { Payload } from '../../../services/Payload';
+import { Logger } from '../../../services/Logger';
+import { ChartDataFactory, ChartDataGenStatus, ChartType } from '../../../provider/chart/ChartDataFactory';
 
 export class ChartController {
 

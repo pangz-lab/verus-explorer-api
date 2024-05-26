@@ -30,6 +30,12 @@ export type ConfigData = {
         enabled: boolean
         errorLog: string
         debugLog: string
+    },
+    aggregator: {
+        coinPaprika: {
+            baseUrl: string,
+            coin: string,
+        },
     }
 }
 
@@ -65,6 +71,12 @@ export class AppConfig {
             enabled: process.env.ENABLE_LOGGING! == "true" ?? false,
             errorLog: process.env.ERROR_LOG!,
             debugLog: process.env.DEBUG_LOG!
+        },
+        aggregator: {
+            coinPaprika: {
+                baseUrl: process.env.MARKET_COINPAPRIKA_BASE_URL!,
+                coin: process.env.MARKET_COINPAPRIKA_BASE_COIN!,
+            }
         }
     };
 

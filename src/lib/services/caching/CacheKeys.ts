@@ -24,4 +24,6 @@ export class CacheKeys {
     static ChartRawDataShortPrefix: CacheData = { key: "chart_raw_data_short:", ttl: 180 }; //OK
     static ChartDataGenExecFlagPrefix: CacheData = { key: "chart_raw_data_gen_exec_stats:", ttl: 60 * 10 }; //TTL used to set lock/unlock chart data generation
     static ChartDispDataPrefix: CacheData = { key: "chart_disp_data:", ttl: 1 }; //TTL used is defined in the controller
+
+    static AggregatorDataPrefix: CacheData = { key: "agg_data:", ttl: 60 * 10 }; //OK
 }

@@ -5,7 +5,7 @@ import { ChartService, DateRange } from "../../services/chart/ChartService";
 import { BlockBasicInfo, BlockBasicInfoWithTx } from "../../models/BlockBasicInfo";
 import { TransactionService, TxBasicInfo } from "../../services/chain/TransactionService";
 import { ServicePayload } from "../../services/Payload";
-import { MiningPoolStats } from "../../services/MiningPoolStats";
+import { MiningPoolStatsService } from "../../services/aggregator/MiningPoolStatsService";
 import { MiningStatsBasicInfo } from "../../models/MiningStats";
 
 type ChartBlockTxsBasicInfo = {
@@ -24,7 +24,7 @@ export class ChartDataProvider {
         const ttl = CacheKeys.StatsMiningDataPrefix.ttl;
 
         const result: ServicePayload = await PayloadCache.get<ServicePayload>({
-            source: async () => await MiningPoolStats.getMiningData(),
+            source: async () => await MiningPoolStatsService.getMiningData(),
             abortSaveOn: (r) => r === undefined || (r != undefined && r.error),
             key: cacheKey,
             ttl: ttl

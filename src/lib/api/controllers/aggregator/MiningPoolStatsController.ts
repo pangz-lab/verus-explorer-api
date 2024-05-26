@@ -1,18 +1,18 @@
 import { Request, Response } from 'express';
-import { PayloadCache } from '../../services/caching/Caching';
-import { CacheKeys } from '../../services/caching/CacheKeys';
-import { ServicePayload } from '../../services/Payload';
-import { Logger } from '../../services/Logger';
-import { MiningPoolStats } from '../../services/MiningPoolStats';
+import { PayloadCache } from '../../../services/caching/Caching';
+import { CacheKeys } from '../../../services/caching/CacheKeys';
+import { ServicePayload } from '../../../services/Payload';
+import { Logger } from '../../../services/Logger';
+import { MiningPoolStatsService } from '../../../services/aggregator/MiningPoolStatsService';
 
-export class StatsController {
+export class MiningPoolStatsController {
     static async pool(req: Request, res: Response) {
         try {
             const cacheKey = CacheKeys.StatsMiningDataPrefix.key+':miningData';
             const ttl = CacheKeys.StatsMiningDataPrefix.ttl;
 
             const resBody: ServicePayload = await PayloadCache.get<ServicePayload>({
-                source: async () => await MiningPoolStats.getMiningData(),
+                source: async () => await MiningPoolStatsService.getMiningData(),
                 abortSaveOn: (r) => r === undefined || (r != undefined && r.error),
                 key: cacheKey,
                 ttl: ttl

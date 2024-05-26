@@ -1,7 +1,7 @@
 import axios from 'axios';
-import { Payload, ServicePayload } from './Payload';
+import { Payload, ServicePayload } from '../Payload';
 
-export class MiningPoolStats {
+export class MiningPoolStatsService {
     private static urlTime = 'https://miningpoolstats.stream/data/time';
     private static urlMiningData = 'https://data.miningpoolstats.stream/data/veruscoin.js';
     private static urlCoinPriceData = 'https://data.miningpoolstats.stream/data/price/veruscoin.js';
@@ -20,26 +20,26 @@ export class MiningPoolStats {
     };
 
     static async getMiningData(): Promise<ServicePayload> {
-        return await MiningPoolStats.request(MiningPoolStats.urlMiningData, 'getMiningData');
+        return await MiningPoolStatsService.request(MiningPoolStatsService.urlMiningData, 'getMiningData');
     }
 
     static async getCoinSupplyData(): Promise<ServicePayload> {
-        return await MiningPoolStats.request(MiningPoolStats.urlCoinPriceData, 'getCoinSupplyData');
+        return await MiningPoolStatsService.request(MiningPoolStatsService.urlCoinPriceData, 'getCoinSupplyData');
     }
 
     static async getCoinMarketData(): Promise<ServicePayload> {
-        return await MiningPoolStats.request(MiningPoolStats.urlCoinMarketData, 'getCoinMarketData');
+        return await MiningPoolStatsService.request(MiningPoolStatsService.urlCoinMarketData, 'getCoinMarketData');
     }
 
     private static async getTime(): Promise<any> {
-        return axios.get(MiningPoolStats.urlTime);
+        return axios.get(MiningPoolStatsService.urlTime);
     }
 
     private static async request(url: string, methodName: string): Promise<ServicePayload> {
         try {
-            const timeResponse = await MiningPoolStats.getTime();
+            const timeResponse = await MiningPoolStatsService.getTime();
             const time = timeResponse.data;
-            const response: any = await axios.get(url + `?t=${time}`, { headers: MiningPoolStats.headers });
+            const response: any = await axios.get(url + `?t=${time}`, { headers: MiningPoolStatsService.headers });
 
             if (response.status != 200 || response.data === undefined) {
                 Payload.logError(
