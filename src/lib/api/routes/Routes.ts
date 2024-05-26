@@ -1,4 +1,4 @@
-import { Express } from 'express';
+import express, { Express } from 'express';
 import { BlockController } from "../controllers/BlockController";
 import { SearchController } from '../controllers/SearchController';
 import { AddressController } from "../controllers/AddressController";
@@ -7,6 +7,7 @@ import { BlockchainController } from "../controllers/BlockchainController";
 import { TransactionController } from "../controllers/TransactionController";
 import { ChartController } from '../controllers/ChartController';
 import { StatsController } from '../controllers/StatsController';
+import path from 'path';
 
 export class Routes {
     static generate(app: Express): void {
@@ -24,5 +25,15 @@ export class Routes {
         app.get('/api/search/', SearchController.query);
         app.get('/api/chart/:type/', ChartController.query);
         app.get('/api/stats/mining/', StatsController.pool);
+    }
+
+    static generateUI(app: Express, baseDir: string, routes: string[]) {
+        const p = baseDir.split('/');
+        app.use(express.static(p[p.length - 1]));
+        routes.forEach(route => {
+            app.get(route, function(req, res) {
+                res.sendFile(path.join(baseDir, 'index.html'));
+            });
+        });
     }
 }

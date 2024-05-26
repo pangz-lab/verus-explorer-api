@@ -2,6 +2,11 @@ import 'dotenv/config';
 export type ConfigData = {
     chain: string,
     localServerPort: number,
+    ui: {
+        bind: boolean,
+        baseDir: string,
+        routes: string[],
+    },
     chainNode: {
         walletId: string,
         address: string,
@@ -32,6 +37,11 @@ export class AppConfig {
     private static kv: ConfigData = {
         chain: process.env.CHAIN_SOURCE!,
         localServerPort: parseInt(process.env.LOCAL_SERVER_PORT!),
+        ui: { 
+            bind: process.env.BIND_UI! == "true" ?? false,
+            baseDir: process.env.UI_BASE_DIR!,
+            routes: process.env.UI_ROUTES!.split(','),
+        },
         chainNode: {
             walletId: process.env.NODE_WALLET_ID!,
             address: process.env.NODE_ADDRESS!,

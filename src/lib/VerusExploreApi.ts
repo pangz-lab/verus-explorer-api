@@ -16,7 +16,7 @@ export class VerusExplorerApi implements ServerInterface {
     open(): ServerInterface {
         this.httpServer.open();
         this.zmqClient.connect();
-        Routes.generate(this.httpServer!.routeApp!);
+        Routes.generate(this.httpServer!.serviceApp!);
         return this;
     }
 

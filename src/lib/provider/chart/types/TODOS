@@ -1,0 +1,13 @@
+UI
+- remove unused codes - done
+- UI connection/disconnection behavior
+- fix tx and address loading behavior
+- fix height redundant request - https://wip-insight.pangz.tech/block/23332
+- translation
+- add API version in UI
+- status error
+- test
+
+API
+- add apikey
+- fix wss blob error, reduce status
