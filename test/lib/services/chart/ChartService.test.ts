@@ -32,7 +32,7 @@ describe('ChartService', () => {
         it('should generate correct date ranges for basic range input', () => {
             const highDate = new Date('2024-05-10T00:30:00Z');
             const lowDate = new Date('2024-05-10T00:00:00Z');
-            const generator = ChartService.dataRange(highDate, lowDate, 10);
+            const generator = ChartService.createRangeInDate(highDate, lowDate, 10);
 
             const expectedRanges = [
                 { start: new Date('2024-05-10T00:10:00Z'), end: new Date('2024-05-10T00:00:00Z') },
@@ -53,7 +53,7 @@ describe('ChartService', () => {
         it('should generate correct date ranges when lower date minute is higher than the expected step', () => {
             const highDate = new Date('2024-05-10T00:30:00Z');
             const lowDate = new Date('2024-05-10T00:11:00Z');
-            const generator = ChartService.dataRange(highDate, lowDate, 10);
+            const generator = ChartService.createRangeInDate(highDate, lowDate, 10);
 
             const expectedRanges = [
                 { start: new Date('2024-05-10T00:20:00Z'), end: new Date('2024-05-10T00:10:00Z') },
@@ -73,7 +73,7 @@ describe('ChartService', () => {
         it('should generate correct date ranges when lower date minute is twice higher than the expected step', () => {
             const highDate = new Date('2024-05-10T00:30:00Z');
             const lowDate = new Date('2024-05-10T00:21:00Z');
-            const generator = ChartService.dataRange(highDate, lowDate, 10);
+            const generator = ChartService.createRangeInDate(highDate, lowDate, 10);
 
             const expectedRanges = [
                 { start: new Date('2024-05-10T00:30:00Z'), end: new Date('2024-05-10T00:20:00Z') },
@@ -92,7 +92,7 @@ describe('ChartService', () => {
         it('should generate correct date ranges when lower date minute is lower than the expected step', () => {
             const highDate = new Date('2024-05-10T00:30:00Z');
             const lowDate = new Date('2024-05-10T00:09:00Z');
-            const generator = ChartService.dataRange(highDate, lowDate, 10);
+            const generator = ChartService.createRangeInDate(highDate, lowDate, 10);
 
             const expectedRanges = [
                 { start: new Date('2024-05-10T00:10:00Z'), end: new Date('2024-05-10T00:00:00Z') },
@@ -114,7 +114,7 @@ describe('ChartService', () => {
         it('should generate end date higher than highDate as last value', () => {
             const highDate = new Date('2024-05-10T00:30:00Z');
             const lowDate = new Date('2024-05-10T00:00:00Z');
-            const generator = ChartService.dataRange(highDate, lowDate, 25);
+            const generator = ChartService.createRangeInDate(highDate, lowDate, 25);
 
             const expectedRanges = [
                 { start: new Date('2024-05-10T00:25:00Z'), end: new Date('2024-05-10T00:00:00Z') },
@@ -135,7 +135,7 @@ describe('ChartService', () => {
             const lowDate = new Date('2024-05-10T00:30:00Z');
             const highDate = new Date('2024-05-10T00:00:00Z');
             try {
-                ChartService.dataRange(highDate, lowDate, 10)
+                ChartService.createRangeInDate(highDate, lowDate, 10)
             } catch (e) {
                 expect(e).toThrow();
             }
@@ -145,7 +145,7 @@ describe('ChartService', () => {
             const highDate = new Date('2024-05-10T00:30:00Z');
             const lowDate = new Date('2024-05-10T00:00:00Z');
             try {
-                ChartService.dataRange(highDate, lowDate, -1)
+                ChartService.createRangeInDate(highDate, lowDate, -1)
             } catch (e) {
                 expect(e).toThrow();
             }

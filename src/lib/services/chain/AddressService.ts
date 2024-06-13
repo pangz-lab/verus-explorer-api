@@ -1,11 +1,11 @@
 import { ServicePayload, Payload } from "../Payload";
-import { ChainNativeApi } from "./ChainNativeApi";
+import { ChainNativeApi, Range } from "./ChainNativeApi";
 
 export class AddressService {
-    static async getTxIds(address: string): Promise<ServicePayload> {
+    static async getTxIds(address: string, range?: Range): Promise<ServicePayload> {
         try {
             var data: any;
-            const response: any = await ChainNativeApi.getAddressTxIds([address]);
+            const response: any = await ChainNativeApi.getAddressTxIds([address], range);
             if(response.status != 200 || response.data.error) {
                 Payload.logError(
                     'fetch address txids',

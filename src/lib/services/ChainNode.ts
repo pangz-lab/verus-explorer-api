@@ -30,14 +30,15 @@ export class ChainNode {
             (state.blocks < state.longestChain) ?
                 (100 / state.longestChain) * state.blocks :
                 0
-            const message = syncPercentage == 100? "💯 Complete": "🚧 Syncing";
+            const message = syncPercentage == 100? "💯 COMPLETE": "🚧 SYNCING ...";
+            state.sync = syncPercentage == 100;
             state = {
                 sync: state.sync,
                 blocks: state.blocks,
                 longestChain: state.longestChain,
                 blockHash: state.blockHash,
                 longestChainBlockHash: state.longestChainBlockHash,
-                syncPercentage: syncPercentage,
+                syncPercentage: parseFloat((syncPercentage).toFixed(2)),
                 message: message,
             }
         }

@@ -4,7 +4,6 @@ import { Logger } from '../../../services/Logger';
 import { ChartDataFactory, ChartDataGenStatus, ChartType } from '../../../provider/chart/ChartDataFactory';
 
 export class ChartController {
-
     static async query(req: Request, res: Response) {
         try {
             //TODO: messy, improve the conditions
@@ -47,7 +46,7 @@ export class ChartController {
     }
 
     private static deactivateDataGeneration(chartType: ChartType, range: string): void {
-         ChartDataFactory.setDataGenExecFlag(chartType, range, ChartDataGenStatus.inactive);
+        ChartDataFactory.setDataGenExecFlag(chartType, range, ChartDataGenStatus.inactive);
     }
     
     private static activateDataGeneration(chartType: ChartType, range: string): void {

@@ -1,12 +1,13 @@
 import { CacheKeys } from "../../services/caching/CacheKeys";
 import { PayloadCache } from "../../services/caching/Caching";
 import { BlockchainService } from "../../services/chain/BlockchainService";
-import { ChartService, DateRange } from "../../services/chart/ChartService";
+import { ChartService } from "../../services/chart/ChartService";
 import { BlockBasicInfo, BlockBasicInfoWithTx } from "../../models/BlockBasicInfo";
 import { TransactionService, TxBasicInfo } from "../../services/chain/TransactionService";
 import { ServicePayload } from "../../services/Payload";
 import { MiningPoolStatsService } from "../../services/aggregator/MiningPoolStatsService";
 import { MiningStatsBasicInfo } from "../../models/MiningStats";
+import { DateRange, GeneratorService } from "../../services/GeneratorService";
 
 type ChartBlockTxsBasicInfo = {
     blockMiningDataTx: string,
@@ -92,17 +93,17 @@ export class ChartDataProvider {
         const dateGenerator = ChartDataProvider.getDateRangeGenerator(intervalInMinutes);
         if(dateGenerator === undefined) { return undefined; }
         
-        var dateGenerated = dateGenerator.next();
-        while(!dateGenerated.done) {
-            const dateKey = dateGenerated.value.start + '_' + dateGenerated.value.end;
+        var rangeGenerated = dateGenerator.next();
+        while(!rangeGenerated.done) {
+            const dateKey = rangeGenerated.value.start + '_' + rangeGenerated.value.end;
             const cacheKey = CacheKeys.ChartRawDataLongPrefix.key + dateKey;
             const ttl = CacheKeys.ChartRawDataLongPrefix.ttl;
 
             var queryResult = await PayloadCache.get<BlockBasicInfo[]>({
                 source: async () => await ChartService.getDatasetFromDateRange(
-                    dateGenerated.value.start,
+                    rangeGenerated.value.start,
                     // Add 1 second to avoid overlap
-                    dateGenerated.value.end + 1
+                    rangeGenerated.value.end + 1
                 ),
                 abortSaveOn: (r) => r === undefined,
                 key: cacheKey,
@@ -121,7 +122,7 @@ export class ChartDataProvider {
                 }
                 result = result.concat(finalResult);
             }
-            dateGenerated = dateGenerator.next();
+            rangeGenerated = dateGenerator.next();
         }
         return result;
     }
@@ -176,7 +177,7 @@ export class ChartDataProvider {
         const lowDate = structuredClone(highDate);
         lowDate.setMinutes(lowDate.getMinutes() - intervalInMinutes);
         
-        return ChartService.dataRange(
+        return GeneratorService.createRangeInDate(
             highDate,
             lowDate,
             ChartDataProvider.stepsInMinutes

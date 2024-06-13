@@ -19,10 +19,11 @@ export class HttpService {
         var retry = 0;
         var result: any;
         do {
+            axios.defaults.timeout = 30000;
             result = await axios.post(
                 this.url,
                 payload,
-                this.createPayload()
+                this.createPayload(),
             );
             retry += 1;
             status = result.status;

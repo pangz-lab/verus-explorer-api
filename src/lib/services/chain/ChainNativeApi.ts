@@ -1,4 +1,8 @@
 import { HttpService } from "../HttpService";
+export type Range = {
+    start: number,
+    end: number,
+}
 
 export class ChainNativeApi {
     static async getInfo(): Promise<Object> {
@@ -37,8 +41,12 @@ export class ChainNativeApi {
         return await HttpService.sendChainRpcRequest("getidentity", [identityName, height].filter(e => typeof e == 'string'));
     }
 
-    static async getAddressTxIds(addresses: string[]): Promise<Object> {
-        return await HttpService.sendChainRpcRequest("getaddresstxids", [{"addresses": addresses}]);
+    static async getAddressTxIds(addresses: string[], range?: Range): Promise<Object> {
+        var params: Object = [{"addresses": addresses}];
+        if(range !== undefined) {
+            params = [{"addresses": addresses, "start": range.start, "end": range.end }];
+        }
+        return await HttpService.sendChainRpcRequest("getaddresstxids", params);
     }
 
     static async getAddressBalance(addresses: string[]): Promise<Object> {
