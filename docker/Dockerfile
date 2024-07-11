@@ -1,8 +1,5 @@
 FROM node:lts-alpine as base
 
-# Change working directory
-WORKDIR /app
-
 # Copy source code
 COPY . .
 

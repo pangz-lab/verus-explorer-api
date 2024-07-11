@@ -2,17 +2,19 @@ import 'dotenv/config';
 export type ConfigData = {
     chain: string,
     localServerPort: number,
+    localServerApiKey: string,
+    localServerRequireKey: boolean,
     ui: {
         bind: boolean,
         baseDir: string,
         routes: string[],
     },
-    chainNode: {
-        walletId: string,
-        address: string,
-        authUser: string,
-        authPw: string,
-    },
+    // chainNode: {
+    //     walletId: string,
+    //     address: string,
+    //     authUser: string,
+    //     authPw: string,
+    // },
     zmq: {
         host: string,
         port: number,
@@ -43,17 +45,19 @@ export class AppConfig {
     private static kv: ConfigData = {
         chain: process.env.CHAIN_SOURCE!,
         localServerPort: parseInt(process.env.LOCAL_SERVER_PORT!),
+        localServerApiKey: process.env.LOCAL_SERVER_API_KEY!,
+        localServerRequireKey: process.env.LOCAL_SERVER_REQUIRE_KEY! == "true" ?? false,
         ui: { 
             bind: process.env.BIND_UI! == "true" ?? false,
             baseDir: process.env.UI_BASE_DIR!,
             routes: process.env.UI_ROUTES!.split(','),
         },
-        chainNode: {
-            walletId: process.env.NODE_WALLET_ID!,
-            address: process.env.NODE_ADDRESS!,
-            authUser: process.env.NODE_AUTH_USER!,
-            authPw: process.env.NODE_AUTH_PW!,
-        },
+        // chainNode: {
+        //     walletId: process.env.NODE_WALLET_ID!,
+        //     address: process.env.NODE_ADDRESS!,
+        //     authUser: process.env.NODE_AUTH_USER!,
+        //     authPw: process.env.NODE_AUTH_PW!,
+        // },
         zmq: {
             host: process.env.NODE_ZMQ_ADDRESS!,
             port: parseInt(process.env.NODE_ZMQ_PORT!),

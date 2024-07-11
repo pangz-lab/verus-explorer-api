@@ -7,6 +7,8 @@ describe('AppConfig', () => {
         originalEnv = { ...process.env };
         process.env.CHAIN_SOURCE = 'test_chain';
         process.env.LOCAL_SERVER_PORT = '8080';
+        process.env.LOCAL_SERVER_API_KEY = 'api-key';
+        process.env.LOCAL_SERVER_REQUIRE_KEY = 'true';
         process.env.BIND_UI = 'true';
         process.env.UI_BASE_DIR = '/base/dir';
         process.env.UI_ROUTES = '/a,/b';
@@ -36,12 +38,14 @@ describe('AppConfig', () => {
         const expectedConfig: ConfigData = {
             chain: 'test_chain',
             localServerPort: 8080,
-            chainNode: {
-                walletId: 'test_wallet',
-                address: 'test_address',
-                authUser: 'test_user',
-                authPw: 'test_pw',
-            },
+            localServerApiKey: 'api-key',
+            localServerRequireKey: true,
+            // chainNode: {
+            //     walletId: 'test_wallet',
+            //     address: 'test_address',
+            //     authUser: 'test_user',
+            //     authPw: 'test_pw',
+            // },
             zmq: {
                 host: 'test_zmq_host',
                 port: 3000,

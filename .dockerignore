@@ -3,8 +3,13 @@ LICENSE
 README.md
 .gitignore
 .nvmrc
+.env.*
+test
 error.log
+debug.log
+app.logrotate
 jest.config.js
 node_modules
 compose.yaml
 ecosystem.config.js
+docker_build.sh

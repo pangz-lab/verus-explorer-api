@@ -6,34 +6,34 @@ jest.mock('node:fs');
 jest.mock('../../../src/AppConfig');
 
 describe('Logger', () => {
-    const mockConfigData: ConfigData = {
-        chain: 'test_chain',
-        localServerPort: 8080,
-        chainNode: {
-            walletId: 'test_wallet',
-            address: 'test_address',
-            authUser: 'test_user',
-            authPw: 'test_pw',
-        },
-        zmq: {
-            host: 'test_zmq_host',
-            port: 3000,
-        },
-        nodeApi: {
-            host: 'test_api_host',
-            authToken: 'test_api_token',
-        },
-        caching: {
-            enabled: true,
-            host: 'test_db_host',
-            port: 27017,
-        },
-        logging: {
-            enabled: true,
-            errorLog: 'error.log',
-            debugLog: 'debug.log'
-        }
-    };
+    // const mockConfigData: ConfigData = {
+    //     chain: 'test_chain',
+    //     localServerPort: 8080,
+    //     // chainNode: {
+    //     //     walletId: 'test_wallet',
+    //     //     address: 'test_address',
+    //     //     authUser: 'test_user',
+    //     //     authPw: 'test_pw',
+    //     // },
+    //     zmq: {
+    //         host: 'test_zmq_host',
+    //         port: 3000,
+    //     },
+    //     nodeApi: {
+    //         host: 'test_api_host',
+    //         authToken: 'test_api_token',
+    //     },
+    //     caching: {
+    //         enabled: true,
+    //         host: 'test_db_host',
+    //         port: 27017,
+    //     },
+    //     logging: {
+    //         enabled: true,
+    //         errorLog: 'error.log',
+    //         debugLog: 'debug.log'
+    //     }
+    // };
 
     beforeAll(() => {
         // (AppConfig.get as jest.Mock).mockReturnValue(mockConfigData);

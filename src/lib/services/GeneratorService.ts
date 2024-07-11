@@ -1,4 +1,3 @@
-//Unused yet - double check
 export type DateRange = {
     start: number,
     end: number,
