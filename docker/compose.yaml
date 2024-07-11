@@ -1,32 +1,9 @@
 version: "3.9"
-include:
-  - infra.yaml
 services:
-  verus-exp-rpc:
-    image: pangzlab/verus-rpc-server
-    container_name: verus-exp-rpc
-    environment:
-      - RPC_NODE_URL=localhost:27486
-      - RPC_NODE_USER=verusdesktop
-      - RPC_NODE_PASSWORD=y8D6YXhAFk6jShHiRBKAgRCx0t9ZdMf2S3K0o7zN8So
-      - SERVER_PORT=7777
-      - SERVER_ADDRESS=127.0.0.1
-    network_mode: host
-  verus-exp-api:
+  verus-explorer-api:
     image: pangzlab/verus-explorer-api
-    container_name: verus-exp-api
+    container_name: verus-explorer-api
     env_file:
       - .env.docker
     network_mode: host
-  verus-exp-ui:
-    image: pangzlab/verus-explorer-ui
-    container_name: verus-exp-ui
-    environment:
-      - ENV_API_SERVER=http://127.0.0.1:2220
-      - ENV_API_TOKEN=Basic dmVydXNkZXNrdG9wOnk4RDZZWGhBRms2alNoSGlSQktBZ1JDeDB0OVpkTWYyUzNLMG83ek44U28=
-      - ENV_WS_SERVER=ws://127.0.0.1:2220/verus/wss
-      # - ENV_API_SERVER=https://wip-ws-insight.pangz.tech
-      # - ENV_API_TOKEN=Basic dmVydXNkZXNrdG9wOnk4RDZZWGhBRms2alNoSGlSQktBZ1JDeDB0OVpkTWYyUzNLMG83ek44U28=
-      # - ENV_WS_SERVER=wss://wip-ws-insight.pangz.tech/verus/wss
-    ports:
-      - "2221:80"
+    
