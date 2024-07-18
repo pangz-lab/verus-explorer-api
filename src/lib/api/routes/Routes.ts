@@ -28,6 +28,7 @@ export class Routes {
         app.get('/api/'+Routes.ver+'/blockchain/height', BlockchainController.height);
         app.get('/api/'+Routes.ver+'/blockchain/status', BlockchainController.status);
         app.get('/api/'+Routes.ver+'/transaction/:txHash/info', TransactionController.info);
+        app.get('/api/'+Routes.ver+'/transaction/hexscript/:hexScript/info', TransactionController.decodeHexScript);
         app.get('/api/'+Routes.ver+'/identity/:id/info', IdentityController.info);
         app.get('/api/'+Routes.ver+'/address/:address/txids', AddressController.txIdsByRange);
         app.get('/api/'+Routes.ver+'/address/:address/balance', AddressController.balance);

@@ -60,4 +60,8 @@ export class ChainNativeApi {
     static async getBlockchainInfo(): Promise<Object> {
         return await HttpService.sendChainRpcRequest('getblockchaininfo', []);
     }
+    
+    static async decodeHexScript(hexScript: string): Promise<Object> {
+        return await HttpService.sendChainRpcRequest('decodescript', [hexScript]);
+    }
 }

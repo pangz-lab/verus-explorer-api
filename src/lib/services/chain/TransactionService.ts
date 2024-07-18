@@ -74,6 +74,31 @@ export class TransactionService {
             return Payload.withError();
         }
     }
+    
+    static async decodeHexScript(hexString: string): Promise<Object> {
+        try {
+            var data: any;
+            const response: any = await ChainNativeApi.decodeHexScript(hexString);
+            if(response.status != 200 || response.data.error) {
+                Payload.logError(
+                    'fetch decoded hex script',
+                    `Key: -`,
+                    `decodeRaw`);
+                return Payload.withError();
+            }
+            
+            data = response.data.result;
+            if(data === undefined) { return Payload.withError(); }
+
+            return Payload.withSuccess(data);
+        } catch (e) {
+            Payload.logError(
+                'fetch decoded hex script - [Exception] : ' + e,
+                `Key: -`,
+                `decodeRaw`);
+            return Payload.withError();
+        }
+    }
 
     static async getBlockTxsInfoSummary(blockTxs: string[]): Promise<BlockTxInfoSummary[]> {
         var txsInfo = [];

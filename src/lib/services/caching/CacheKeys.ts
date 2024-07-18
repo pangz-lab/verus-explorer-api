@@ -16,6 +16,7 @@ export class CacheKeys {
     
     static TxInfoPrefix: CacheData = { key: "tx_info:", ttl: 86400 }; //OK
     static TxBasicInfoPrefix: CacheData = { key: "tx_basic_info:", ttl: 86400 }; //OK
+    static TxHexScriptPrefix: CacheData = { key: "tx_hex_script:", ttl: 86400 }; //OK
     
     static IdentityInfoPrefix: CacheData = { key: "identity_info:", ttl: 600 }; //OK
     
